@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Категории</title>
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+</head>
+<body>
+
+{% include "products/navbar.html" %}
+
+
+{% for item in categories %}
+
+<h1>{{ item.title }} / {{ item.slug }}</h1>
+<img src="{{ item.image.url }}" width="200px" height="60px">
+
+    <div class="container">
+        {% for item_subcategories in item.subcategories.all %}
+            <h4>{{ item_subcategories.title }} / {{ item_subcategories.slug }}</h4><br>
+            <img src="{{ item_subcategories.image.url }}" width="150px" height="40px">
+        {% endfor %}
+    </div>
+
+{% endfor %}
+
+
+
+ {% block paginator %}
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        <a class="page-link" href="?page=1">В начало</a>
+        <li class="page-item">
+
+            {% if product.has_previous %}
+            <a class="page-link" href="?page={{ categories.previous_page_number }}">Назад</a>
+            {% else %}
+
+            {% endif %}
+        </li>
+        {% if product.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ categories.next_page_number }}">Далее</a></li>
+        {% endif %}
+
+        <a class="page-link" href="?page={{ categories.paginator.num_pages }}">В конец</a>
+    </ul>
+    <p class="page-item" align="center">
+        Страница номер {{ categories.number }} из {{ categories.paginator.num_pages }}
+    </p>
+</nav>
+{% endblock %}
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
+</body>
+</html>
