@@ -12,7 +12,7 @@
 
 {% for item in product %}
 
-<h3><a style="text-decoration: none;" href="{{ item.get_absolute_url }}">{{ item.title }} / {{ item.slug }} / {{ item.price }} рублей</a></h3>
+<h3><a style="text-decoration: none;" href="{{ item.get_absolute_url }}">{{ item.title }} / {{ item.price }} рублей</a> <a href="{% url 'add_to_basket' product_slug=item.slug %}" style="text-decoration: none; color: black"><b>+</b></a> </h3>
 <br>
 <div style="margin-left: 40px">
     {% for item_photo in item.photos.all %}
