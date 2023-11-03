@@ -34,8 +34,7 @@ class UserLoginView(View):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('main_page')
-        return redirect('login')
+        return redirect('main_page')
 
 
 @login_required
@@ -47,13 +46,21 @@ def user_logout(request):
 class ProfileView(View):
     def get(self, request):
         if request.user.is_authenticated:
+            prod = []
             try:
                 user_session = request.session
                 products = user_session['products']
+
+                for item in user_session['products']:
+                    try:
+                        prod.append(Product.objects.get(title=item['title']))
+                    except:
+                        pass
+                print(prod)
             except:
                 products = []
 
-            return render(request, 'user_profile/profile.html', {'products': products})
+            return render(request, 'user_profile/profile.html', {'products': products, 'products_objects': prod})
         else:
             return redirect('login')
 

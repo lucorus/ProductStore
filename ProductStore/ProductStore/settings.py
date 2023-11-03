@@ -95,6 +95,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
+#SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 LANGUAGE_CODE = 'ru'
 
 AUTH_USER_MODEL = 'user_profile.CustomUser'

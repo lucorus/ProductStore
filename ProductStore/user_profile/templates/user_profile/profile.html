@@ -16,11 +16,17 @@
 
 <div class="container">
 
-{% for item in products %}
+{% for item in products_objects %}
     <b><a href="{% url 'delete_product_into_basket' product_title=item.title %}">{{ item.title }}</a></b>
     {{ item.price }}
-    {{ item.count }}<br>
+    {% get_count request item.title %}<br>
     <h1><a href="{% url 'change_count' product_title=item.title operation='+' %}">+</a> / <a href="{% url 'change_count' product_title=item.title operation='-' %}">-</a></h1>
+    <br>
+
+    {% for item_photo in item.photos.all %}
+        <img src="{{ item_photo.product_photo.url }}" width="200px" height="70px">
+    {%  endfor %}
+
     <br><br>
 {% endfor %}
 
