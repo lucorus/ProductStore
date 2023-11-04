@@ -1,27 +1,43 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
 from django.utils.text import slugify
-from django.views.generic import CreateView, TemplateView
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth import login, logout
 from . import models
 from . import forms
 from products.models import Product
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
 
 
-class Register(View):
-    def get(self, request):
-        return render(request, 'user_profile/register.html', {'form': forms.CustomUserCreationForm})
-
+class RegistrationView(View):
     def post(self, request):
-        form = forms.CustomUserCreationForm(request.POST, request.FILES)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.slug = slugify(str(user.username))
+        username = str(request.POST.get('username'))
+        password = str(request.POST.get('password'))
+        email = str(request.POST.get('email'))
+
+        # Проверка данных формы
+        errors = {}
+        if models.CustomUser.objects.filter(username=username).exists():
+            errors['username'] = 'Пользователь с таким именем уже существует!'
+        if len(password) < 8:
+            errors['password'] = 'Пароль должен состоять минимум из 8 символов'
+        if models.CustomUser.objects.filter(email=email).exists():
+            errors['email'] = 'Пользователь с такой почтой уже существует!'
+
+        if errors:
+            return JsonResponse({'status': 'error', 'errors': errors})
+        else:
+            # Создание нового пользователя
+            user = models.CustomUser.objects.create_user(username=username, password=password,
+                                                         email=email, slug=slugify(username))
             user.save()
             login(request, user)
-        return redirect('main_page')
+
+            return JsonResponse({'status': 'success'})
+
+    def get(self, request):
+        return render(request, 'user_profile/register.html')
 
 
 class UserLoginView(View):
@@ -56,13 +72,12 @@ class ProfileView(View):
                         prod.append(Product.objects.get(title=item['title']))
                     except:
                         pass
-                print(prod)
             except:
                 products = []
 
             return render(request, 'user_profile/profile.html', {'products': products, 'products_objects': prod})
         else:
-            return redirect('login')
+            return redirect('main_page')
 
 
 class AddProductToSessionView(View):
@@ -100,7 +115,7 @@ class AddProductToSessionView(View):
 class ClearBasketView(View):
     def get(self, request):
         user_session = request.session
-        # корзина представляет из себя список товаров, поэтому она всегда должна иметь тип list
+        # корзина является список товаров, поэтому она всегда должна иметь тип list
         user_session['products'] = []
         return redirect('profile')
 

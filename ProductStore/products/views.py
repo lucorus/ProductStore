@@ -1,32 +1,59 @@
-from django.core.paginator import Paginator
-from django.shortcuts import render, redirect
-from django.views import View
+from django.db.models import Q
+from django.http import Http404
+from django.views.generic import ListView, DetailView, FormView
 from user_profile.forms import UserLoginForm
 from . import models
 
 
-class MainView(View):
-    def get(self, request):
-        products = models.Product.objects.select_related('subcategory').all().defer('subcategory__category__slug',
-                                                                                    'subcategory__category__image',
-                                                                                    'subcategory__image',
-                                                                                    'subcategory__slug')
-        return render(request, 'products/main_page.html', {'product': products, 'form': UserLoginForm()})
+class MainView(ListView, FormView):
+    template_name = 'products/main_page.html'
+    context_object_name = 'product'
+    form_class = UserLoginForm
+    paginate_by = 2
+
+    def get_queryset(self):
+        products = models.Product.objects.select_related('subcategory').all().defer(
+            'subcategory__category__slug',
+            'subcategory__category__image',
+            'subcategory__image',
+            'subcategory__slug').order_by('id')
+        return products
 
 
 # детальная информация о продукте
-class ProductDetailView(View):
-    def get(self, request, slug):
-        product = models.Product.objects.select_related('subcategory').get(slug=slug)
-        return render(request, 'products/detail.html', {'product': product, 'form': UserLoginForm()})
+class ProductDetailView(DetailView, FormView):
+    context_object_name = 'product'
+    template_name = 'products/detail.html'
+    form_class = UserLoginForm
+
+    def get_object(self, queryset=None):
+        slug = self.kwargs.get(self.slug_url_kwarg, None)
+        try:
+            return models.Product.objects.select_related('subcategory').get(slug=slug)
+        except:
+            raise Http404('Такого товара не существует')
 
 
 # выводим все категории и подкатегории
-class CategoryView(View):
-    def get(self, request):
-        category = Paginator(models.Category.objects.all().order_by('-id'), 1)
-        page_number = request.GET.get('page')
-        page_object = category.get_page(page_number)
-        return render(request, 'products/categories.html', {'categories': page_object, 'form': UserLoginForm()})
+class CategoryView(ListView, FormView):
+    template_name = 'products/categories.html'
+    context_object_name = 'categories'
+    form_class = UserLoginForm
+    paginate_by = 1
+    queryset = models.Category.objects.all().order_by('id')
 
+
+# возвращает продукты, находящиеся в категории/подкатегории с slug'ом = slug
+class ProductInCategoryView(ListView, FormView):
+    template_name = 'products/main_page.html'
+    context_object_name = 'product'
+    form_class = UserLoginForm
+    paginate_by = 2
+
+    def get_queryset(self):
+        slug = self.kwargs['slug']
+        queryset = models.Product.objects.select_related('subcategory').filter(
+            Q(subcategory__slug=slug) | Q(subcategory__category__slug=slug)
+        ).order_by('id')
+        return queryset
 

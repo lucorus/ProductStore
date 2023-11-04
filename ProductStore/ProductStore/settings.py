@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'products',
     'user_profile',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -113,6 +114,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA__ROOT = join(BASE_DIR, '')
+
+STATICFILES_DIRS = [
+   os.path.join(BASE_DIR, "static"),
+]
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
