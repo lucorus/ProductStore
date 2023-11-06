@@ -1,0 +1,30 @@
+{% load static %}
+{% load tags %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+<div class="row">
+  {% for item in product %}
+
+  {% get_count request item.title as get_count %}
+
+  <!-- если товаров в корзине меньше 1 (такого товара нет в корзине), то будет возможность нажать на плюсик и добавить товар в корзину -->
+  <div class="column">
+    <div class="product-card">
+      <img src="{{ item.photos.first.product_photo.url }}" width="200px" height="70px">
+      <a href="{{ item.get_absolute_url }}"><h3>{{ item.title }}</h3></a>
+      <div class="price">Цена: {{ item.price }} ₽
+      {% if get_count < 1 %}
+          <a href="{% url 'add_to_basket' product_slug=item.slug %}" style="color: LimeGreen; margin-right: 4px"><b>+</b></a>
+      {% endif %}
+      </div>
+
+      <div class="category">
+        Категория: <a href="{{ item.subcategory.category.get_absolute_url }}">{{ item.subcategory.category }}</a>
+      </div>
+      <div class="subcategory">Подкатегория:
+        <a href="{{ item.subcategory.get_absolute_url }}">{{ item.subcategory }}</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>

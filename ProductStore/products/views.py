@@ -9,7 +9,7 @@ class MainView(ListView, FormView):
     template_name = 'products/main_page.html'
     context_object_name = 'product'
     form_class = UserLoginForm
-    paginate_by = 2
+    paginate_by = 3
 
     def get_queryset(self):
         products = models.Product.objects.select_related('subcategory').all().defer(

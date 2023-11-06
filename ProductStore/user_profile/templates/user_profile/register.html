@@ -5,11 +5,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Регистрация</title>
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style_register.css' %}">
 </head>
-<body align="center">
+<body>
 
+<a align="left" href="{% url 'main_page' %}">На главную</a>
 
+<div align="center">
 <form id="registrationForm">
   {% csrf_token %}
   <div>
@@ -20,7 +22,7 @@
 
   <div>
     <label for="id_password">Пароль:</label>
-    <input class="input-field" type="password" id="id_password" name="password" required>
+    <input placeholder="не менее 8 символов" class="input-field" type="password" id="id_password" name="password" required>
     <br><span id="passwordError" class="error"></span>
   </div>
 
@@ -32,9 +34,9 @@
 
 
 
-  <button class="bubbly-button" type="submit">Register</button>
+  <button class="bubbly-button" type="submit">Зарегистрироваться</button>
 </form>
-
+</div>
 
 <script>
   var animateButton = function(e) {

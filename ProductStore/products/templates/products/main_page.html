@@ -10,29 +10,7 @@
 {% include "products/navbar.html" %}
 {% load tags %}
 
-{% for item in product %}
-
-{% get_count request item.title as get_count %}
-<!-- если товаров в корзине меньше 1 (такого товара нет в корзине), то будет возможность нажать на плюсик и добавить товар в корзину -->
-<h3>
-    <a style="text-decoration: none;" href="{{ item.get_absolute_url }}">{{ item.title }} / {{ item.price }} рублей</a>
-    {% if get_count < 1 %}
-    <a href="{% url 'add_to_basket' product_slug=item.slug %}" style="text-decoration: none; color: black"><b style="color: green">+</b></a>
-    {% endif %}
-</h3>
-
-<br>
-<div style="margin-left: 40px">
-    {% for item_photo in item.photos.all %}
-        <img src="{{ item_photo.product_photo.url }}" width="200px" height="70px">
-    {% endfor %}
-
-
-    <h5>{{ item.subcategory }}  ({{ item.subcategory.category }})</h5>
-</div>
-
-<br><br>
-{% endfor %}
+{% include "products/product.html" %}
 
 
 {% include "products/paginator.html" %}
