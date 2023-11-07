@@ -81,9 +81,9 @@ class ProfileView(View):
 
 
 class AddProductToSessionView(View):
-    def get(self, request, product_slug):
+    def get(self, request):
         try:
-            product = Product.objects.get(slug=product_slug)
+            product = Product.objects.get(slug=request.GET.get('product_slug'))
 
             # Словарь с информацией о товаре
             product_info = {
@@ -107,24 +107,30 @@ class AddProductToSessionView(View):
                     user_session['products'] = [product_info]
 
                 user_session.save()
+
+            return JsonResponse({'success': True})
         except:
-            pass
-        return redirect('main_page')
+            return JsonResponse({'success': False})
 
 
+# очищает корзину
 class ClearBasketView(View):
     def get(self, request):
-        user_session = request.session
-        # корзина является список товаров, поэтому она всегда должна иметь тип list
-        user_session['products'] = []
-        return redirect('profile')
-
-
-class DeleteProductIntoBasket(View):
-    def get(self, request, product_title):
         try:
             user_session = request.session
-            product = Product.objects.get(title=product_title)
+            # корзина является список товаров, поэтому она всегда должна иметь тип list
+            user_session['products'] = []
+            return JsonResponse({'success': True})
+        except:
+            return JsonResponse({'success': False})
+
+
+# удаляет определённый продукт из корзины
+class DeleteProductIntoBasket(View):
+    def get(self, request):
+        try:
+            user_session = request.session
+            product = Product.objects.get(slug=request.GET.get('product_slug'))
             index = 0
 
             # ищем продукт в списке
@@ -136,16 +142,19 @@ class DeleteProductIntoBasket(View):
                     user_session.save()
                     break
                 index += 1
+
+            return JsonResponse({'success': True})
         except:
-            return redirect('profile')
+            return JsonResponse({'success': False})
 
 
 # уменьшает кол-во продуктов в сессии юзера если operation = "-", иначе увеличивает
 class ChangeCount(View):
-    def get(self, request, product_title, operation):
+    def get(self, request):
         try:
             user_session = request.session
-            product = Product.objects.get(title=product_title)
+            product = Product.objects.get(slug=request.GET.get('product_slug'))
+            operation = request.GET.get('operation')
             index = 0
 
             # ищем продукт в списке

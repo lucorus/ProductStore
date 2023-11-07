@@ -11,16 +11,16 @@
 
 <h1>Привет, <b>{{ request.user }}</b></h1>
 <p>Сумма товаров в корзине = {% sum_basket request %}</p>
-<h3><a style="text-decoration: none;" href="{% url 'clear_basket' %}">Очистить корзину</a></h3>
+<h3><a onclick="ClearBasket()" style="text-decoration: none;" href="#">Очистить корзину</a></h3>
 
 
 <div class="container">
 
 {% for item in products_objects %}
-    <b><a href="{% url 'delete_product_into_basket' product_title=item.title %}">{{ item.title }}</a></b>
+    <b><a onclick="deleteProductFromBasket('{{ item.slug }}')" href="#">{{ item.title }}</a></b>
     {{ item.price }}
     {% get_count request item.title %}<br>
-    <h1><a href="{% url 'change_count' product_title=item.title operation='+' %}">+</a> / <a href="{% url 'change_count' product_title=item.title operation='-' %}">-</a></h1>
+    <h1><a onclick="ChangeCountFromBasket('{{ item.slug }}', '+')" href="#">+</a> / <a onclick="ChangeCountFromBasket('{{ item.slug }}', '-')" href="#">-</a></h1>
     <br>
 
     {% for item_photo in item.photos.all %}
@@ -32,6 +32,75 @@
 
 </div>
 
+
+<script>
+    // изменяет кол-во продукта с productSlug +1 если oper = + и -1 иначе oper = -1
+    function ChangeCountFromBasket(productSlug, oper) {
+    $.ajax({
+        url: '{% url "change_count" %}',
+        type: 'GET',
+        data:
+        {
+            'product_slug': productSlug,
+            'operation': oper
+        },
+        success: function(response) {
+            if (response.success) {
+                // Обработка успешного удаления товара из сессии
+            } else {
+                // Обработка ошибки при удалении товара из сессии
+            }
+        },
+        error: function() {
+            // Обработка ошибки AJAX запроса
+        }
+    });
+}
+</script>
+<script>
+    // удаляет продукт с productSlug из корзины
+    function deleteProductFromBasket(productSlug) {
+    $.ajax({
+        url: '{% url "delete_product_into_basket" %}',
+        type: 'GET',
+        data:
+        {
+            'product_slug': productSlug
+        },
+        success: function(response) {
+            if (response.success) {
+                // Обработка успешного удаления товара из сессии
+            } else {
+                // Обработка ошибки при удалении товара из сессии
+            }
+        },
+        error: function() {
+            // Обработка ошибки AJAX запроса
+        }
+    });
+}
+</script>
+<script>
+    // полностью очищает корзину
+    function ClearBasket()
+    {
+        $.ajax({
+            url: '{% url "clear_basket" %}',
+            type: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    // Обработка успешного добавления товара в сессию
+                } else {
+                    // Обработка ошибки при добавлении товара в сессию
+                }
+            },
+            error: function() {
+                // Обработка ошибки AJAX запроса
+            }
+        });
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
