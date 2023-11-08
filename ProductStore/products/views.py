@@ -39,7 +39,7 @@ class CategoryView(ListView, FormView):
     template_name = 'products/categories.html'
     context_object_name = 'categories'
     form_class = UserLoginForm
-    paginate_by = 1
+    paginate_by = 2
     queryset = models.Category.objects.all().order_by('id')
 
 
