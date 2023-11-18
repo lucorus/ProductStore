@@ -21,6 +21,11 @@ class SubCategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
 
 
+class CommentsAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'author', 'product']
+
+
+admin.site.register(Comments, CommentsAdmin)
 admin.site.register(ProductPhoto, ProductPhotoAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Category, CategoryAdmin)

@@ -18,11 +18,11 @@ class RegistrationView(View):
 
         # Проверка данных формы
         errors = {}
-        if models.CustomUser.objects.filter(username=username).exists():
+        if models.CustomUser.objects.filter(username__iexact=username).exists():
             errors['username'] = 'Пользователь с таким именем уже существует!'
         if len(password) < 8:
             errors['password'] = 'Пароль должен состоять минимум из 8 символов'
-        if models.CustomUser.objects.filter(email=email).exists():
+        if models.CustomUser.objects.filter(email__iexact=email).exists():
             errors['email'] = 'Пользователь с такой почтой уже существует!'
 
         if errors:

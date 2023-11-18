@@ -1,6 +1,10 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
-from django.http import Http404
-from django.views.generic import ListView, DetailView, FormView
+from django.http import Http404, JsonResponse
+from django.urls import reverse_lazy
+from django.views import View
+from django.views.decorators.http import require_GET
+from django.views.generic import ListView, DetailView, FormView, CreateView
 from user_profile.forms import UserLoginForm
 from . import models
 
@@ -57,3 +61,49 @@ class ProductInCategoryView(ListView, FormView):
         ).order_by('id')
         return queryset
 
+
+# class CreateCommentView(CreateView, LoginRequiredMixin):
+#     model = models.Comments
+#     fields = ['text', 'estimation']
+#     success_url = reverse_lazy('main_page')
+#
+#     def form_valid(self, form):
+#         form.instance.author = self.request.user
+#         form.instance.product = models.Product.objects.get(slug=self.request.POST.get('product_slug'))
+#         response = super().form_valid(form)
+#         return JsonResponse({'comment_id': self.object.id})
+
+
+# class CreateCommentView(View):
+#     def post(self, request, *args, **kwargs):
+#         product_slug = request.POST.get('product_slug')
+#         text = request.POST.get('text')
+#         estimation = request.POST.get('estimation')
+#         author = request.user
+#
+#         # Создание комментария
+#         models.Comments.objects.create(
+#             text=text,
+#             author=author,
+#             product= models.Product.objects.get(slug=product_slug),
+#             estimation=estimation
+#         )
+#
+#         return JsonResponse({'code': 200})
+#
+#
+# from django.contrib.auth.mixins import LoginRequiredMixin
+# from django.views.generic.edit import CreateView
+# from .models import Comments, Product
+
+class CreateCommentView(LoginRequiredMixin, CreateView):
+    model = models.Comments
+    fields = ['text', 'estimation']
+    template_name = 'products/file.html'
+    success_url = reverse_lazy('main_page')
+
+    def form_valid(self, form):
+        product_slug = self.request.POST.get('product_slug')
+        form.instance.author = self.request.user
+        form.instance.product = models.Product.objects.get(slug=product_slug)
+        return super().form_valid(form)

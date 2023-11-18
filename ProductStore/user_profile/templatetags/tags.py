@@ -1,4 +1,7 @@
 from django import template
+
+from products.models import Comments
+
 register = template.Library()
 
 
@@ -30,3 +33,17 @@ def get_count(request=None, title=''):
         return 0
     except:
         return 0
+
+
+@register.simple_tag(name='get_comments')
+def get_comments(product_name=''):
+    try:
+        return Comments.objects.filter(product__title=product_name)
+    except:
+        return {}
+
+
+@register.simple_tag(name='length')
+def length(text):
+    return len(str(text))
+
