@@ -1,0 +1,106 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Регистрация</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style_register.css' %}">
+</head>
+<body>
+
+<a align="left" href="{% url 'main_page' %}">На главную</a>
+
+<div align="center">
+<form id="registrationForm">
+  {% csrf_token %}
+  <div>
+    <label for="id_username" style="margin-right: 1.2%">Имя:</label>
+    <input class="input-field" type="text" id="id_username" name="username" required>
+    <br><span id="usernameError" class="error"></span>
+  </div>
+
+  <div>
+    <label for="id_password">Пароль:</label>
+    <input placeholder="не менее 8 символов" class="input-field" type="password" id="id_password" name="password" required>
+    <br><span id="passwordError" class="error"></span>
+  </div>
+
+  <div>
+    <label for="id_email" style="margin-right: 0.5%">Почта:</label>
+    <input class="input-field" type="email" id="id_email" name="email" required>
+    <br><span id="emailError" class="error"></span>
+  </div>
+
+
+
+  <button class="bubbly-button" type="submit">Зарегистрироваться</button>
+</form>
+</div>
+
+<script>
+  var animateButton = function(e) {
+
+  e.preventDefault;
+  //reset animation
+  e.target.classList.remove('animate');
+
+  e.target.classList.add('animate');
+  setTimeout(function(){
+    e.target.classList.remove('animate');
+  },700);
+};
+
+var bubblyButtons = document.getElementsByClassName("bubbly-button");
+
+for (var i = 0; i < bubblyButtons.length; i++) {
+  bubblyButtons[i].addEventListener('click', animateButton, false);
+}
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+  $('#registrationForm').submit(function(event) {
+    event.preventDefault(); // Отменить отправку формы
+
+    var form = $(this);
+    var url = form.attr('action');
+    var formData = form.serialize();
+
+    // Скрыть все сообщения об ошибках перед отправкой формы
+    $('.error').text('');
+
+    $.ajax({
+      type: 'POST',
+      url: url,
+      data: formData,
+      success: function(response) {
+        // Обработка успешного ответа сервера
+        console.log(response);
+        if (response.status === 'success') {
+          window.location.href = '{% url "main_page" %}'; // Редирект на страницу 'main_page'
+        } else if (response.status === 'error') {
+          // Вывести сообщения об ошибках рядом с соответствующими полями
+          $.each(response.errors, function(field, error) {
+            $('#' + field + 'Error').text(error);
+          });
+        } else {
+          alert('Registration failed. Please try again.');
+        }
+      },
+      error: function(xhr, errmsg, err) {
+        // Обработка ошибки
+        console.log(xhr.status + ': ' + xhr.responseText);
+        alert('Registration failed. Please try again.');
+      }
+    });
+  });
+});
+</script>
+
+
+</body>
+</html>
+
+
