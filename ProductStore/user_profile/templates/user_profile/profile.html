@@ -33,73 +33,8 @@
 </div>
 
 
-<script>
-    // изменяет кол-во продукта с productSlug +1 если oper = + и -1 иначе oper = -1
-    function ChangeCountFromBasket(productSlug, oper) {
-    $.ajax({
-        url: '{% url "change_count" %}',
-        type: 'GET',
-        data:
-        {
-            'product_slug': productSlug,
-            'operation': oper
-        },
-        success: function(response) {
-            if (response.success) {
-                // Обработка успешного удаления товара из сессии
-            } else {
-                // Обработка ошибки при удалении товара из сессии
-            }
-        },
-        error: function() {
-            // Обработка ошибки AJAX запроса
-        }
-    });
-}
-</script>
-<script>
-    // удаляет продукт с productSlug из корзины
-    function deleteProductFromBasket(productSlug) {
-    $.ajax({
-        url: '{% url "delete_product_into_basket" %}',
-        type: 'GET',
-        data:
-        {
-            'product_slug': productSlug
-        },
-        success: function(response) {
-            if (response.success) {
-                // Обработка успешного удаления товара из сессии
-            } else {
-                // Обработка ошибки при удалении товара из сессии
-            }
-        },
-        error: function() {
-            // Обработка ошибки AJAX запроса
-        }
-    });
-}
-</script>
-<script>
-    // полностью очищает корзину
-    function ClearBasket()
-    {
-        $.ajax({
-            url: '{% url "clear_basket" %}',
-            type: 'GET',
-            success: function(response) {
-                if (response.success) {
-                    // Обработка успешного добавления товара в сессию
-                } else {
-                    // Обработка ошибки при добавлении товара в сессию
-                }
-            },
-            error: function() {
-                // Обработка ошибки AJAX запроса
-            }
-        });
-    }
-</script>
+{% load static %}
+<script src="{% static 'js/basket_script.js' %}"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>

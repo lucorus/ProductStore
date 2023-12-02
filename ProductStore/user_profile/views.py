@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.text import slugify
-from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth import login, logout
 from . import models
@@ -59,7 +59,10 @@ def user_logout(request):
     return redirect('main_page')
 
 
-class ProfileView(View):
+class ProfileView(LoginRequiredMixin, View):
+    login_url = 'main_page'
+    redirect_field_name = 'main_page'
+
     def get(self, request):
         if request.user.is_authenticated:
             prod = []
@@ -80,7 +83,10 @@ class ProfileView(View):
             return redirect('main_page')
 
 
-class AddProductToSessionView(View):
+class AddProductToSessionView(LoginRequiredMixin, View):
+    login_url = 'main_page'
+    redirect_field_name = 'main_page'
+
     def get(self, request):
         try:
             product = Product.objects.get(slug=request.GET.get('product_slug'))
@@ -114,7 +120,10 @@ class AddProductToSessionView(View):
 
 
 # очищает корзину
-class ClearBasketView(View):
+class ClearBasketView(LoginRequiredMixin, View):
+    login_url = 'main_page'
+    redirect_field_name = 'main_page'
+
     def get(self, request):
         try:
             user_session = request.session
@@ -126,7 +135,10 @@ class ClearBasketView(View):
 
 
 # удаляет определённый продукт из корзины
-class DeleteProductIntoBasket(View):
+class DeleteProductIntoBasket(LoginRequiredMixin, View):
+    login_url = 'main_page'
+    redirect_field_name = 'main_page'
+
     def get(self, request):
         try:
             user_session = request.session
@@ -149,7 +161,10 @@ class DeleteProductIntoBasket(View):
 
 
 # уменьшает кол-во продуктов в сессии юзера если operation = "-", иначе увеличивает
-class ChangeCount(View):
+class ChangeCount(LoginRequiredMixin, View):
+    login_url = 'main_page'
+    redirect_field_name = 'main_page'
+
     def get(self, request):
         try:
             user_session = request.session
