@@ -1,11 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.text import slugify
-from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth import login, logout
 from django.views.generic import DetailView, ListView
-
 from . import models
 from . import forms
 from products.models import Product
@@ -82,26 +80,6 @@ class ProfilView(LoginRequiredMixin, ListView):
         except:
             products = {}
         return {'products': products, 'products_objects': prod}
-
-
-# class ProfileView(View, LoginRequiredMixin):
-#
-#     def get(self, request):
-#
-#         prod = []
-#         try:
-#             user_session = request.session
-#             products = user_session['products']
-#
-#             for item in user_session['products']:
-#                 try:
-#                     prod.append(Product.objects.get(title=item))
-#                 except:
-#                     pass
-#         except:
-#             products = {}
-#
-#         return render(request, 'user_profile/profile.html', {'products': products, 'products_objects': prod})
 
 
 class AddProductToSessionView(LoginRequiredMixin, View):
