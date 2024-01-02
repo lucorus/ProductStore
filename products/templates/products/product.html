@@ -30,51 +30,6 @@
 </div>
 
 
-
-<script>
-    // добавляет продукт в корзину
-    function addProductToSession(productSlug) {
-    $.ajax({
-        //url: '/user/add_basket/' + productSlug,
-        url: '{% url "add_to_basket" %}',
-        type: 'GET',
-        data: {
-            'product_slug': productSlug
-        },
-        success: function(response) {
-            if (response.success) {
-                // Обработка успешного добавления товара в сессию
-            } else {
-                // Обработка ошибки при добавлении товара в сессию
-            }
-        },
-        error: function() {
-            // Обработка ошибки AJAX запроса
-        }
-    });
-}
-</script>
-<script>
-    // удаляет продукт с productSlug из корзины
-    function deleteProductFromBasket(productSlug) {
-    $.ajax({
-        url: '{% url "delete_product_into_basket" %}',
-        type: 'GET',
-        data:
-        {
-            'product_slug': productSlug
-        },
-        success: function(response) {
-            if (response.success) {
-                // Обработка успешного удаления товара из сессии
-            } else {
-                // Обработка ошибки при удалении товара из сессии
-            }
-        },
-        error: function() {
-            // Обработка ошибки AJAX запроса
-        }
-    });
-}
-</script>
+<script src="{% static 'js/basket.js' %}"></script>
+<script src="{% static 'js/basket.js' %}"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

@@ -1,27 +1,111 @@
+{% load tags %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>{{ product.title }}</title>
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/detail_style.css' %}">
 </head>
 <body>
-
 {% include "products/navbar.html" %}
+<div class="container">
+
+
+
+
+
+
+
 
 
 <h3>{{ product.title }} / {{ product.price }} рублей</h3>
+
+<h5>{{ product.subcategory }}  ({{ product.subcategory.category }})</h5>
 <br>
-<div style="margin-left: 40px">
-    {% for item_photo in product.photos.all %}
-        <img src="{{ item_photo.product_photo.url }}" width="200px" height="70px">
-    {% endfor %}
-
-
-    <h5>{{ product.subcategory }}  ({{ product.subcategory.category }})</h5>
+<div id="carouselExampleIndicators" class="carousel slide">
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+  </div>
+  <div class="carousel-inner">
+      {% for item_photo in product.photos.all %}
+            <div class="carousel-item active" align="center">
+                <img aria-hidden="true" src="{{ item_photo.product_photo.url }}" class="d-block" width="90%" height="700px">
+            </div>
+        {% endfor %}
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="false"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="false"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
 </div>
+<br>
 
-<br><br>
+
+
+
+
+
+
+
+{% if request.user.is_authenticated %}
+<form id="create-comment-form" method="post" enctype="multipart/form-data" class="post-form">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="comment-text">Текст комментария:</label>
+        <textarea placeholder="Текст комментария" class="form-control" id="comment-text" name="text" required></textarea>
+    </div>
+    <div class="form-group">
+        <label for="comment-estimation">Оценка:</label>
+        <select class="form-control" id="comment-estimation" name="estimation" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+    </div>
+    <input type="hidden" name="product_slug" value="{{ product.slug }}">
+    <button type="button" class="btn btn-primary" onclick="submitForm()">Оставить отзыв</button>
+</form>
+{% endif %}
+
+
+{% get_comments product.title as comments %}
+
+{% for item in comments %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{{ item.author }}</h5>
+            {% length item.text as len %}
+            {% if len > 100 %}
+            <p class="card-text">{{ item.text }}
+                    <a href="#" class="read-more" data-bs-toggle="collapse" data-bs-target="#{{ item.id }}-collapse">Читать дальше</a>
+            </p>
+                <div class="collapse" id="{{ item.id }}-collapse">
+                    <p class="card-text">{{ item.text }}</p>
+                </div>
+            {% else %}
+                <p class="card-text">{{ item.text }}</p>
+            {% endif %}
+
+
+            <p class="card-text">Оценка: {{ item.estimation }}</p>
+        </div>
+    </div>
+{% endfor %}
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'js/comment_script.js' %}"></script>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
 </body>

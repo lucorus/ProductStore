@@ -60,13 +60,37 @@ def user_logout(request):
     return redirect('main_page')
 
 
+class ProfileView(LoginRequiredMixin, View):
+    login_url = 'main_page'
+    redirect_field_name = 'main_page'
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            prod = []
+            try:
+                user_session = request.session
+                products = user_session['products']
+
+                for item in user_session['products']:
+                    try:
+                        prod.append(Product.objects.get(title=item['title']))
+                    except:
+                        pass
+            except:
+                products = []
+
+            return render(request, 'user_profile/profile.html', {'products': products, 'products_objects': prod})
+        else:
+            return redirect('main_page')
+
+
 class ProfilView(LoginRequiredMixin, ListView):
     login_url = 'main_page'
     redirect_field_name = 'main_page'
     template_name = 'user_profile/profile.html'
+    context_object_name = 'user'
 
     def get_queryset(self):
-
         prod = []
         try:
             user_session = self.request.session
@@ -79,6 +103,7 @@ class ProfilView(LoginRequiredMixin, ListView):
                     pass
         except:
             products = {}
+        print(products, ' AND ', prod)
         return {'products': products, 'products_objects': prod}
 
 
@@ -89,7 +114,7 @@ class AddProductToSessionView(LoginRequiredMixin, View):
     def get(self, request):
         try:
             product = Product.objects.get(slug=request.GET.get('product_slug'))
-
+            print('PRODUCT - ', product)
             # Словарь с информацией о товаре
             product_info = {
                 'price': product.price,
@@ -100,7 +125,6 @@ class AddProductToSessionView(LoginRequiredMixin, View):
             if request.user.is_authenticated:
                 # Получаем сессию пользователя
                 user_session = request.session
-
                 # Проверяем, существует ли ключ 'products' в сессии
                 if 'products' in user_session:
                     # Если ключ существует, а в сессии (корзине) ещё нет такого продукта, то добавляем его
@@ -110,12 +134,13 @@ class AddProductToSessionView(LoginRequiredMixin, View):
                 else:
                     # Если не существует, создаем новый словарь с товаром
                     # user_session['products'] = [product_info]
+                    user_session['products'] = {}
                     user_session['products'][product.title] = product_info
-
                 user_session.save()
 
             return JsonResponse({'success': True})
-        except:
+        except Exception as ex:
+            print('ex - ', ex)
             return JsonResponse({'success': False})
 
 
@@ -129,6 +154,7 @@ class ClearBasketView(LoginRequiredMixin, View):
             user_session = request.session
             # корзина является список товаров, поэтому она всегда должна иметь тип dict
             user_session['products'] = {}
+            request.session.save()
             return JsonResponse({'success': True})
         except:
             return JsonResponse({'success': False})
