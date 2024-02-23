@@ -12,11 +12,15 @@
     <div class="product-card">
       <img src="{{ item.photos.first.product_photo.url }}" width="200px" height="70px">
       <a href="{{ item.get_absolute_url }}"><h3>{{ item.title }}</h3></a>
-      <div class="price">Цена: {{ item.price }} ₽
-      {% if get_count < 1 and request.user.is_authenticated %}
-          <a onclick="addProductToSession('{{ item.slug }}')" href="#" style="color: LimeGreen; margin-right: 4px"><b>+</b></a>
-      {% endif %}
-      </div>
+        {% if item.discount == 0.00 %}
+            <div class="price">Цена: {{ item.price }} ₽
+        {% else %}
+            <div class="price">Цена: <del>{{ item.price }}</del> {{ item.price_with_discount }}  ₽
+        {% endif %}
+        {% if get_count < 1 and request.user.is_authenticated %}
+          <a name="add_product" onclick="addProductToSession('{{ item.slug }}'); this.style.display='none';" href="#" style="color: LimeGreen; margin-right: 4px"><b>+</b></a>
+        {% endif %}
+            </div>
 
       <div class="category">
         Категория: <a href="{{ item.subcategory.category.get_absolute_url }}">{{ item.subcategory.category }}</a>
@@ -30,6 +34,19 @@
 </div>
 
 
-<script src="{% static 'js/basket.js' %}"></script>
+<div style="position: fixed; bottom: 20px; right: 20px; padding: 10px;
+            background-color: #bbbdb9; color: black; border-radius: 5px;
+            display: none;" id="alert-container">
+    Товар добавлен в корзину
+    <a href="{% url 'profile' %}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right"
+             viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+                  d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+        </svg>
+    </a>
+</div>
+</div>
+
 <script src="{% static 'js/basket.js' %}"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

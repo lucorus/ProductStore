@@ -1,10 +1,5 @@
 from django.contrib import admin
 from .models import *
-from .models import *
-
-
-from django.contrib import admin
-from .models import *
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -12,13 +7,10 @@ class UserAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('username',)}
 
 
-class BasketAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'owner']
-
-
-class ProductInBasketAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'title', 'count', 'price']
+class CommentsAdmin(admin.ModelAdmin):
+    list_display = ['id', 'author', 'product', 'estimation']
 
 
 admin.site.register(CustomUser, UserAdmin)
+admin.site.register(Comments, CommentsAdmin)
 

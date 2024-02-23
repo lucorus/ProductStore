@@ -14,11 +14,12 @@ class MainView(ListView, FormView):
     paginate_by = 3
 
     def get_queryset(self):
-        products = models.Product.objects.select_related('subcategory').all().defer(
+        products = models.Product.objects.showing_products().select_related('subcategory').all().defer(
             'subcategory__category__slug',
             'subcategory__category__image',
             'subcategory__image',
-            'subcategory__slug').order_by('id')
+            'subcategory__slug',
+            'showing').order_by('id')
         return products
 
 
@@ -31,7 +32,7 @@ class ProductDetailView(DetailView, FormView):
     def get_object(self, queryset=None):
         slug = self.kwargs.get(self.slug_url_kwarg, None)
         try:
-            return models.Product.objects.select_related('subcategory').get(slug=slug)
+            return models.Product.objects.showing_products().select_related('subcategory').get(slug=slug)
         except:
             raise Http404('Такого товара не существует')
 
@@ -54,19 +55,8 @@ class ProductInCategoryView(ListView, FormView):
 
     def get_queryset(self):
         slug = self.kwargs['slug']
-        queryset = models.Product.objects.select_related('subcategory').filter(
+        queryset = models.Product.objects.showing_products().select_related('subcategory').filter(
             Q(subcategory__slug=slug) | Q(subcategory__category__slug=slug)
         ).order_by('id')
         return queryset
 
-
-class CreateCommentView(LoginRequiredMixin, CreateView):
-    model = models.Comments
-    fields = ['text', 'estimation']
-    success_url = reverse_lazy('main_page')
-
-    def form_valid(self, form):
-        product_slug = self.request.POST.get('product_slug')
-        form.instance.author = self.request.user
-        form.instance.product = models.Product.objects.get(slug=product_slug)
-        return super().form_valid(form)

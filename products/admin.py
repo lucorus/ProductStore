@@ -7,7 +7,7 @@ class ProductPhotoAdmin(admin.ModelAdmin):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'title', 'slug', 'subcategory']
+    list_display = ['pk', 'title', 'slug', 'subcategory', 'discount', 'showing']
     prepopulated_fields = {'slug': ('title', )}
 
 

@@ -1,21 +1,23 @@
 // Функции, работающие с корзиной
 
 
+$(document).ajaxComplete(function() {
+  $("#alert-container").fadeIn();
+  setTimeout(function() {
+    $("#alert-container").fadeOut();
+  }, 4000);
+});
+
 // добавляет продукт в корзину
 function addProductToSession(productSlug) {
     $.ajax({
         url: '/user/add_basket',
-        //url: '{% url "add_to_basket" %}',
         type: 'GET',
         data: {
             'product_slug': productSlug
         },
         success: function(response) {
-            if (response.success) {
                 // Обработка успешного добавления товара в сессию
-            } else {
-                // Обработка ошибки при добавлении товара в сессию
-            }
         },
         error: function() {
             // Обработка ошибки AJAX запроса
@@ -34,11 +36,7 @@ function deleteProductFromBasket(productSlug) {
             'product_slug': productSlug
         },
         success: function(response) {
-            if (response.success) {
-                // Обработка успешного удаления товара из сессии
-            } else {
-                // Обработка ошибки при удалении товара из сессии
-            }
+              // Обработка успешного удаления товара из сессии
         },
         error: function() {
             // Обработка ошибки AJAX запроса

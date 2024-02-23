@@ -1,9 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
+from django.urls import reverse_lazy
 from django.utils.text import slugify
 from django.views import View
 from django.contrib.auth import login, logout
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView, ListView, CreateView
 from . import models
 from . import forms
 from products.models import Product
@@ -60,51 +62,25 @@ def user_logout(request):
     return redirect('main_page')
 
 
-class ProfileView(LoginRequiredMixin, View):
-    login_url = 'main_page'
-    redirect_field_name = 'main_page'
-
-    def get(self, request):
-        if request.user.is_authenticated:
-            prod = []
-            try:
-                user_session = request.session
-                products = user_session['products']
-
-                for item in user_session['products']:
-                    try:
-                        prod.append(Product.objects.get(title=item['title']))
-                    except:
-                        pass
-            except:
-                products = []
-
-            return render(request, 'user_profile/profile.html', {'products': products, 'products_objects': prod})
-        else:
-            return redirect('main_page')
-
-
-class ProfilView(LoginRequiredMixin, ListView):
+class ProfileView(LoginRequiredMixin, ListView):
     login_url = 'main_page'
     redirect_field_name = 'main_page'
     template_name = 'user_profile/profile.html'
     context_object_name = 'user'
 
     def get_queryset(self):
-        prod = []
+        product_dict = {}
         try:
             user_session = self.request.session
             products = user_session['products']
 
-            for item in user_session['products']:
-                try:
-                    prod.append(Product.objects.get(title=item))
-                except:
-                    pass
+            po = Product.objects.filter(Q(title__in=products)).distinct()
+            # создаём словарь {название продукта: его данные}
+            for i in range(len(user_session['products'])):
+                product_dict[po[i].title] = po[i]
         except:
             products = {}
-        print(products, ' AND ', prod)
-        return {'products': products, 'products_objects': prod}
+        return {'products': products, 'product_objects': product_dict}
 
 
 class AddProductToSessionView(LoginRequiredMixin, View):
@@ -114,7 +90,6 @@ class AddProductToSessionView(LoginRequiredMixin, View):
     def get(self, request):
         try:
             product = Product.objects.get(slug=request.GET.get('product_slug'))
-            print('PRODUCT - ', product)
             # Словарь с информацией о товаре
             product_info = {
                 'price': product.price,
@@ -133,14 +108,13 @@ class AddProductToSessionView(LoginRequiredMixin, View):
 
                 else:
                     # Если не существует, создаем новый словарь с товаром
-                    # user_session['products'] = [product_info]
                     user_session['products'] = {}
                     user_session['products'][product.title] = product_info
                 user_session.save()
 
             return JsonResponse({'success': True})
         except Exception as ex:
-            print('ex - ', ex)
+            print(ex)
             return JsonResponse({'success': False})
 
 
@@ -203,3 +177,35 @@ class ChangeCount(LoginRequiredMixin, View):
         return redirect('profile')
 
 
+class AddToProductToFavorites(LoginRequiredMixin, View):
+    def get(self, request):
+        try:
+            product_id = request.GET.get('product_id')
+            if not product_id:
+                raise Exception('product_id не найден')
+
+            product = Product.objects.get(id=int(product_id))
+            if product:
+                if request.user.favourites.filter(id=product.id).exists():
+                    request.user.favourites.remove(product)
+                else:
+                    request.user.favourites.add(product)
+                request.user.save()
+                return JsonResponse({'success': True})
+            else:
+                raise Exception('Продукт не найден')
+        except Exception as ex:
+            print(ex)
+            return JsonResponse({'success': False})
+
+
+class CreateCommentView(LoginRequiredMixin, CreateView):
+    model = models.Comments
+    fields = ['text', 'estimation']
+    success_url = reverse_lazy('main_page')
+
+    def form_valid(self, form):
+        product_slug = self.request.POST.get('product_slug')
+        form.instance.author = self.request.user
+        form.instance.product = Product.objects.get(slug=product_slug)
+        return super().form_valid(form)

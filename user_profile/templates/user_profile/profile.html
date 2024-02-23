@@ -11,15 +11,21 @@
 {% include "user_profile/navbar.html" %}
 
     <h1>Здравствуйте, <b>{{ request.user }}</b></h1>
-    <p>Сумма товаров в корзине = {% sum_basket request %}</p>
+    <p>Сумма товаров в корзине = {% sum_basket request user %}</p>
     <h3><a onclick="ClearBasket()" style="text-decoration: none;" href="#">Очистить корзину</a></h3>
 
 <div class="container">
 
-{% for item in user.products_objects %}
+{% for item in user.product_objects.values %}
 
     <b><a onclick="deleteProductFromBasket('{{ item.slug }}')" href="#">{{ item.title }}</a></b>
-    {{ item.price }}
+    Цена:
+    {% if item.discount == 0.00 %}
+        {{ item.price }} ₽
+    {% else %}
+        <del>{{ item.price }}</del> {{ item.price_with_discount }}  ₽
+    {% endif %}
+
     {% get_count request item.title %}<br>
     <h1><a onclick="ChangeCountFromBasket('{{ item.slug }}', '+')" href="#">+</a> / <a onclick="ChangeCountFromBasket('{{ item.slug }}', '-')" href="#">-</a></h1>
     <br>
