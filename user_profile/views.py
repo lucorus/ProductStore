@@ -1,5 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.mail import send_mail
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.utils.text import slugify
@@ -49,11 +51,12 @@ class UserLoginView(View):
         return render(request, 'user_profile/login.html', {'form': form})
 
     def post(self, request):
-        form = forms.UserLoginForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-        return redirect('main_page')
+        try:
+            user = models.CustomUser.objects.get(Q(email=request.POST['username']) | Q(username=request.POST['username']))
+            if user and user.check_password(request.POST['password']):
+                login(request, user)
+        finally:
+            return redirect('main_page')
 
 
 @login_required
@@ -70,17 +73,21 @@ class ProfileView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         product_dict = {}
+        product_list = []
         try:
             user_session = self.request.session
             products = user_session['products']
 
-            po = Product.objects.filter(Q(title__in=products)).distinct()
-            # создаём словарь {название продукта: его данные}
+            po = Product.objects.filter(Q(slug__in=products)).distinct()
+            # создаём словарь {название продукта: его данные} и список продуктов
             for i in range(len(user_session['products'])):
-                product_dict[po[i].title] = po[i]
-        except:
-            products = {}
-        return {'products': products, 'product_objects': product_dict}
+                product_dict[po[i].slug] = po[i]
+                product_list.append(po[i])
+            product_list = Paginator(product_list, 3)
+            product_list = product_list.get_page(self.request.GET.get('page'))
+        except Exception as ex:
+            print(ex)
+        return {'product_objects': product_dict, 'product_list': product_list}
 
 
 class AddProductToSessionView(LoginRequiredMixin, View):
@@ -96,21 +103,19 @@ class AddProductToSessionView(LoginRequiredMixin, View):
                 'count': 1,
             }
 
-            # Проверяем, авторизован ли пользователь
-            if request.user.is_authenticated:
-                # Получаем сессию пользователя
-                user_session = request.session
-                # Проверяем, существует ли ключ 'products' в сессии
-                if 'products' in user_session:
-                    # Если ключ существует, а в сессии (корзине) ещё нет такого продукта, то добавляем его
-                    if product.title not in str(user_session['products']):
-                        user_session['products'][product.title] = product_info
+            # Получаем сессию пользователя
+            user_session = request.session
+            # Проверяем, существует ли ключ 'products' в сессии
+            if 'products' in user_session:
+                # Если ключ существует, а в сессии (корзине) ещё нет такого продукта, то добавляем его
+                if product.slug not in str(user_session['products']):
+                    user_session['products'][product.slug] = product_info
 
-                else:
-                    # Если не существует, создаем новый словарь с товаром
-                    user_session['products'] = {}
-                    user_session['products'][product.title] = product_info
-                user_session.save()
+            else:
+                # Если не существует, создаем новый словарь с товаром
+                user_session['products'] = {}
+                user_session['products'][product.slug] = product_info
+            user_session.save()
 
             return JsonResponse({'success': True})
         except Exception as ex:
@@ -144,7 +149,7 @@ class DeleteProductIntoBasket(LoginRequiredMixin, View):
             user_session = request.session
             product = Product.objects.get(slug=request.GET.get('product_slug'))
 
-            user_session['products'].pop(product.title)
+            user_session['products'].pop(product.slug)
             user_session.save()
 
             return JsonResponse({'success': True})
@@ -164,12 +169,12 @@ class ChangeCount(LoginRequiredMixin, View):
             operation = request.GET.get('operation')
 
             if operation == '+':
-                user_session['products'][product.title]['count'] += 1
+                user_session['products'][product.slug]['count'] += 1
             else:
-                user_session['products'][product.title]['count'] -= 1
+                user_session['products'][product.slug]['count'] -= 1
                 # если кол-во продуктов в корзине с ключом product.title < 1, то удаляем его
-                if user_session['products'][product.title]['count'] < 1:
-                    user_session['products'].pop(product.title)
+                if user_session['products'][product.slug]['count'] < 1:
+                    user_session['products'].pop(product.slug)
             user_session.save()
 
         except:
@@ -209,3 +214,16 @@ class CreateCommentView(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         form.instance.product = Product.objects.get(slug=product_slug)
         return super().form_valid(form)
+
+
+class SendMail(View):
+    def get(self, request):
+        send_mail(
+            'Subject',
+            'Message',
+            'ikedzava.h@gmail.com',
+            [request.user.email, ],
+            fail_silently=False,
+        )
+        return redirect('profile')
+

@@ -15,6 +15,7 @@ urlpatterns = [
     path('registration', views.RegistrationView.as_view(), name='register'),
     path('add_to_favorites', views.AddToProductToFavorites.as_view(), name='add_to_favorites'),
     path('create_comment', views.CreateCommentView.as_view(), name='create_comment'),
+    path('send_mail', views.SendMail.as_view(), name='send_mail'),
 ]
 
 

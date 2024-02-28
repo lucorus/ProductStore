@@ -5,7 +5,7 @@
 <div class="row">
   {% for item in product %}
 
-  {% get_count request item.title as get_count %}
+  {% get_count request item.slug as get_count %}
 
   <!-- если товаров в корзине меньше 1 (такого товара нет в корзине), то будет возможность нажать на плюсик и добавить товар в корзину -->
   <div class="column">
@@ -49,4 +49,22 @@
 </div>
 
 <script src="{% static 'js/basket.js' %}"></script>
+<script>
+
+function addProductToFavorites(productID) {
+    $.ajax({
+        url: '/user/add_to_favorites',
+        type: 'GET',
+        data: {
+            'product_id': productID
+        },
+        success: function(response) {
+                // Обработка успешного добавления товара в сессию
+        },
+        error: function() {
+            // Обработка ошибки AJAX запроса
+        }
+    });
+}
+</script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
