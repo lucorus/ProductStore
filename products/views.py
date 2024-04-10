@@ -56,5 +56,9 @@ class ProductInCategoryView(ListView, FormView):
         queryset = models.Product.objects.showing_products().select_related('subcategory').filter(
             Q(subcategory__slug=slug) | Q(subcategory__category__slug=slug)
         ).order_by('id')
-        return queryset
+        if queryset:
+            return queryset
+        else:
+            raise Http404('Такой категории не существует')
+
 

@@ -1,10 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.urls import reverse_lazy
-from django.utils.text import slugify
 from django.views import View
 from django.contrib.auth import login, logout
 from django.views.generic import DetailView, ListView, CreateView
@@ -33,9 +31,8 @@ class RegistrationView(View):
         if errors:
             return JsonResponse({'status': 'error', 'errors': errors})
         else:
-            # Создание нового пользователя
             user = models.CustomUser.objects.create_user(username=username, password=password,
-                                                         email=email, slug=slugify(username))
+                                                         email=email) #, slug=slugify(username))
             user.save()
             login(request, user)
 
@@ -131,7 +128,7 @@ class ClearBasketView(LoginRequiredMixin, View):
     def get(self, request):
         try:
             user_session = request.session
-            # корзина является список товаров, поэтому она всегда должна иметь тип dict
+            # корзина является словарём товаров {'slug': {'price': #, 'count': #}}, и всегда должна иметь тип dict
             user_session['products'] = {}
             request.session.save()
             return JsonResponse({'success': True})
@@ -148,7 +145,6 @@ class DeleteProductIntoBasket(LoginRequiredMixin, View):
         try:
             user_session = request.session
             product = Product.objects.get(slug=request.GET.get('product_slug'))
-
             user_session['products'].pop(product.slug)
             user_session.save()
 
@@ -176,10 +172,9 @@ class ChangeCount(LoginRequiredMixin, View):
                 if user_session['products'][product.slug]['count'] < 1:
                     user_session['products'].pop(product.slug)
             user_session.save()
-
+            return JsonResponse({'success': True})
         except:
-            pass
-        return redirect('profile')
+            return JsonResponse({'success': False})
 
 
 class AddToProductToFavorites(LoginRequiredMixin, View):
@@ -214,16 +209,3 @@ class CreateCommentView(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         form.instance.product = Product.objects.get(slug=product_slug)
         return super().form_valid(form)
-
-
-class SendMail(View):
-    def get(self, request):
-        send_mail(
-            'Subject',
-            'Message',
-            'ikedzava.h@gmail.com',
-            [request.user.email, ],
-            fail_silently=False,
-        )
-        return redirect('profile')
-

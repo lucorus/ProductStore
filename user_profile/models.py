@@ -1,17 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from products.models import Product
-
-
-class IntegerRangeField(models.IntegerField):
-    def __init__(self, verbose_name=None, name=None, min_value=None, max_value=None, **kwargs):
-        self.min_value, self.max_value = min_value, max_value
-        models.IntegerField.__init__(self, verbose_name, name, **kwargs)
-
-    def formfield(self, **kwargs):
-        defaults = {'min_value': self.min_value, 'max_value': self.max_value}
-        defaults.update(kwargs)
-        return super(IntegerRangeField, self).formfield(**defaults)
+from django.utils.text import slugify
+from products.models import Product, IntegerRangeField
 
 
 class CustomUser(AbstractUser):
@@ -21,6 +11,10 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.username)
+        super(CustomUser, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -35,6 +29,13 @@ class Comments(models.Model):
 
     def __str__(self):
         return f'Комментарий № { self.pk }'
+
+    def save(self, *args, **kwargs):
+        if self.estimation > 5:
+            self.estimation = 5
+        if self.estimation < 1:
+            self.estimation = 1
+        super(Comments, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Комментарий'

@@ -17,7 +17,7 @@ $(document).ready(function() {
         // Обработка успешного ответа сервера
         console.log(response);
         if (response.status === 'success') {
-          window.location.href = '{% url "main_page" %}'; // Редирект на страницу 'main_page'
+          window.location.href = '/'; // Редирект на страницу 'main_page'
         } else if (response.status === 'error') {
           // Вывести сообщения об ошибках рядом с соответствующими полями
           $.each(response.errors, function(field, error) {
