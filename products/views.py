@@ -1,8 +1,6 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import Http404
-from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, FormView, CreateView
+from django.views.generic import ListView, DetailView, FormView
 from user_profile.forms import UserLoginForm
 from . import models
 
@@ -58,5 +56,9 @@ class ProductInCategoryView(ListView, FormView):
         queryset = models.Product.objects.showing_products().select_related('subcategory').filter(
             Q(subcategory__slug=slug) | Q(subcategory__category__slug=slug)
         ).order_by('id')
-        return queryset
+        if queryset:
+            return queryset
+        else:
+            raise Http404('Такой категории не существует')
+
 

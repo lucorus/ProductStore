@@ -27,10 +27,10 @@ def sum_basket(request=None, queryset=None):
 
 # получаем кол-во товаров продукта с названием title
 @register.simple_tag(name='get_count')
-def get_count(request=None, title=''):
+def get_count(request=None, slug=''):
     try:
         user_session = request.session
-        return user_session['products'][title]['count']
+        return user_session['products'][slug]['count']
     except:
         return 0
 
