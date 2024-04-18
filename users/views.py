@@ -6,8 +6,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views.generic import DetailView
 from rest_framework.views import APIView
-
-from . import models
+from . import models, forms
 
 
 class ProfileView(LoginRequiredMixin, DetailView):
@@ -16,6 +15,18 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
     def get_object(self, queryset=None):
         return models.CustomUser.objects.get(slug=self.request.user.slug)
+
+
+class LoginView(APIView):
+    def post(self, request):
+        try:
+            user = models.CustomUser.objects.get(Q(email=request.POST['username']) | Q(username=request.POST['username']))
+            if user and user.check_password(request.POST['password']):
+                login(request, user)
+        except Exception as ex:
+            print(ex)
+        finally:
+            return redirect('products:main_page')
 
 
 class RegistrationView(APIView):

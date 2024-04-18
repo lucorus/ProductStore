@@ -21,13 +21,14 @@ class Product(models.Model):
         ans = round(self.price - (self.price * (self.discount/100)))
         return ans
 
-    # def get_absolute_url(self):
-    #     return reverse('detail', kwargs={'slug': self.slug})
+    def get_absolute_url(self):
+        return reverse('products:product_detail', kwargs={'slug': self.slug})
 
     def __str__(self):
         return self.title
 
     class Meta:
+        ordering = ['-id']
         verbose_name = 'Продукт'
         verbose_name_plural = 'Продукты'
 
@@ -37,13 +38,14 @@ class Category(models.Model):
     slug = models.SlugField()
     image = models.ImageField(upload_to='products/img/category/', verbose_name='Изображение')
 
-    # def get_absolute_url(self):
-    #     return reverse('products_in_category', kwargs={'slug': self.slug})
+    def get_absolute_url(self):
+        return reverse('products:category_detail', kwargs={'category_slug': self.slug})
 
     def __str__(self):
         return self.title
 
     class Meta:
+        ordering = ['-id']
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
@@ -54,12 +56,13 @@ class SubCategory(models.Model):
     image = models.ImageField(upload_to='products/img/subcategory/', verbose_name='Изображение')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='subcategories', verbose_name='Категория')
 
-    # def get_absolute_url(self):
-    #     return reverse('products_in_category', kwargs={'slug': self.slug})
+    def get_absolute_url(self):
+        return reverse('products:subcategory_detail', kwargs={'subcategory_slug': self.slug})
 
     def __str__(self):
         return self.title
 
     class Meta:
+        ordering = ['-id']
         verbose_name = 'Подкатегория'
         verbose_name_plural = 'Подкатегории'
