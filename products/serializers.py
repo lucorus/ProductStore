@@ -1,20 +1,37 @@
-from rest_framework.generics import ListAPIView
-from rest_framework.pagination import PageNumberPagination
 from rest_framework import serializers
-from .models import Product
+from . import models
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    url = serializers.URLField(source='get_absolute_url')
+
+    class Meta:
+        model = models.Category
+        fields = ['title', 'slug', 'image', 'url']
+
+
+class SubCategorySerializer(serializers.ModelSerializer):
+    url = serializers.CharField(source='get_absolute_url')
+    category = CategorySerializer(many=False, read_only=False)
+
+    class Meta:
+        model = models.SubCategory
+        fields = ['title', 'slug', 'image', 'url', 'category']
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    subcategory_title = serializers.CharField(source='subcategory.title')
-    subcategory_slug = serializers.CharField(source='subcategory.slug')
-    category_title = serializers.CharField(source='subcategory.category.title')
-    category_slug = serializers.CharField(source='subcategory.category.slug')
     url = serializers.CharField(source='get_absolute_url')
-    category_url = serializers.CharField(source='subcategory.category.get_absolute_url')
-    subcategory_url = serializers.CharField(source='subcategory.get_absolute_url')
+    subcategory = SubCategorySerializer(many=False, read_only=True)
 
     class Meta:
-        model = Product
-        fields = ['title', 'slug', 'price', 'discount', 'photo',
-                  'subcategory_title', 'subcategory_slug', 'category_title',
-                  'category_slug', 'url', 'category_url', 'subcategory_url']
+        model = models.Product
+        fields = ['title', 'slug', 'price', 'discount', 'photo', 'url', 'subcategory']
+
+
+class CategoriesSerializer(serializers.ModelSerializer):
+    url = serializers.URLField(source='get_absolute_url')
+    subcategories = SubCategorySerializer(many=True)
+
+    class Meta:
+        model = models.Category
+        fields = ['title', 'slug', 'image', 'url', 'subcategories']

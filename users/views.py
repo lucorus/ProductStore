@@ -4,17 +4,19 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
 from rest_framework.views import APIView
 from . import models, forms
+from basket.models import Basket
 
 
-class ProfileView(LoginRequiredMixin, DetailView):
+class ProfileView(LoginRequiredMixin, ListView):
     template_name = 'users/profile.html'
+    paginate_by = 1
     context_object_name = 'user'
 
-    def get_object(self, queryset=None):
-        return models.CustomUser.objects.get(slug=self.request.user.slug)
+    def get_queryset(self):
+        return Basket.objects.filter(owner=self.request.user)
 
 
 class LoginView(APIView):
@@ -55,7 +57,7 @@ class RegistrationView(APIView):
             return JsonResponse({'status': 'success'})
 
     def get(self, request):
-        return render(request, 'user_profile/register.html')
+        return render(request, 'users/register.html')
 
 
 class UserLoginView(APIView):
@@ -64,11 +66,16 @@ class UserLoginView(APIView):
             user = models.CustomUser.objects.get(Q(email=request.POST['username']) | Q(username=request.POST['username']))
             if user and user.check_password(request.POST['password']):
                 login(request, user)
+                return JsonResponse({'status': 'success'})
+            return JsonResponse({'status': 'error', 'message': 'incorrect password'})
+        except Exception as ex:
+            print(ex)
+            return JsonResponse({'status': 'error'})
         finally:
-            return redirect('main_page')
+            return redirect('products:main_page')
 
 
 @login_required
 def user_logout(request):
     logout(request)
-    return redirect('main_page')
+    return redirect('products:main_page')

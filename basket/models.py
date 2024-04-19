@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum
 from users.models import CustomUser
 from products.models import Product
 
@@ -11,6 +12,17 @@ class Basket(models.Model):
 
     def get_count_products_in_basket(self) -> int:
         return Basket.objects.filter(owner=self.owner).count()
+
+    def get_sum_products(self) -> int:
+        try:
+            basket = Basket.objects.filter(owner=self.owner)
+            total = 0
+            for item in basket:
+                total += item.product.price_with_discount() * item.count
+            return total
+        except Exception as ex:
+            print(ex)
+            return 0
 
     def __str__(self):
         return f'Корзина пользователя {self.owner.username} с товаром {self.product.title}'

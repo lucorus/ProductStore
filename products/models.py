@@ -39,7 +39,7 @@ class Category(models.Model):
     image = models.ImageField(upload_to='products/img/category/', verbose_name='Изображение')
 
     def get_absolute_url(self):
-        return reverse('products:category_detail', kwargs={'category_slug': self.slug})
+        return reverse('products:category_detail', kwargs={'slug': self.slug})
 
     def __str__(self):
         return self.title
@@ -57,7 +57,7 @@ class SubCategory(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='subcategories', verbose_name='Категория')
 
     def get_absolute_url(self):
-        return reverse('products:subcategory_detail', kwargs={'subcategory_slug': self.slug})
+        return reverse('products:category_detail', kwargs={'slug': self.slug})
 
     def __str__(self):
         return self.title

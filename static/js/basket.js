@@ -1,122 +1,27 @@
 // Функции, работающие с корзиной
 
 
-$(document).ajaxComplete(function() {
-  $("#alert-container").fadeIn();
-  setTimeout(function() {
-    $("#alert-container").fadeOut();
-  }, 4000);
-});
-
-// добавляет продукт в корзину
-function addProductToSession(productSlug) {
+function addProductInBasket(productSlug) {
     $.ajax({
-        url: '/user/add_basket',
-        type: 'GET',
-        data: {
-            'product_slug': productSlug
-        },
-        success: function(response) {
-                // Обработка успешного добавления товара в сессию
-        },
-        error: function() {
-            // Обработка ошибки AJAX запроса
-        }
+        url: '/basket/basket_add/' + productSlug,
+        type: 'GET'
     });
 }
 
-// удаляет продукт с productSlug из корзины
+
 function deleteProductFromBasket(productSlug) {
     $.ajax({
-        //url: '{% url "delete_product_into_basket" %}',
-        url: '/user/delete_product_into_basket',
-        type: 'GET',
-        data:
-        {
-            'product_slug': productSlug
-        },
-        success: function(response) {
-              // Обработка успешного удаления товара из сессии
-        },
-        error: function() {
-            // Обработка ошибки AJAX запроса
-        }
+        url: '/basket/delete/' + productSlug,
+        type: 'GET'
     });
 }
 
-// изменяет кол-во продукта с productSlug +1 если oper = + и -1 иначе oper = -1
+
+// изменяет кол-во продукта с productSlug +-1 если oper = '-' иначе +1
 function ChangeCountFromBasket(productSlug, oper)
 {
     $.ajax({
-        //url: '{% url "change_count" %}',
-        url: '/user/change_count',
+        url: '/basket/change_count/' + productSlug + '/' + oper,
         type: 'GET',
-        data:
-        {
-            'product_slug': productSlug,
-            'operation': oper
-        },
-        success: function(response)
-        {
-            if (response.success) {
-                // Обработка успешного удаления товара из сессии
-            }
-            else {
-                // Обработка ошибки при удалении товара из сессии
-            }
-        },
-        error: function() {
-            // Обработка ошибки AJAX запроса
-        }
-    });
-}
-
-
-// удаляет продукт с productSlug из корзины
-function deleteProductFromBasket(productSlug)
-{
-    $.ajax({
-        //url: '{% url "delete_product_into_basket" %}',
-        url: '/user/delete_product_into_basket',
-        type: 'GET',
-        data:
-        {
-            'product_slug': productSlug
-        },
-        success: function(response)
-        {
-            if (response.success) {
-                // Обработка успешного удаления товара из сессии
-            }
-            else {
-                // Обработка ошибки при удалении товара из сессии
-            }
-        },
-        error: function() {
-            // Обработка ошибки AJAX запроса
-        }
-    });
-}
-
-
-// полностью очищает корзину
-function ClearBasket()
-{
-    $.ajax({
-        //url: '{% url "clear_basket" %}',
-        url: '/user/clear_basket',
-        type: 'GET',
-        success: function(response)
-        {
-           if (response.success) {
-            // Обработка успешного добавления товара в сессию
-            }
-            else {
-              // Обработка ошибки при добавлении товара в сессию
-            }
-        },
-        error: function() {
-                // Обработка ошибки AJAX запроса
-        }
     });
 }

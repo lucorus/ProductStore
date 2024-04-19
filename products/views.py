@@ -1,44 +1,37 @@
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.views import View
 from django.views.generic import ListView, FormView
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.generics import ListAPIView
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from users.forms import UserLoginForm
-from . import models, serializers
+from . import models, serializers, paginators
 
 
 def main_page(request):
     return render(request, 'products/main_page.html', {'form': UserLoginForm})
 
 
-class CustomPagination(PageNumberPagination):
-    page_size = 2
-    page_size_query_param = 'page_size'
-    max_page_size = 100
+def categories(request):
+    return render(request, 'products/categories.html', {'form': UserLoginForm})
 
 
 class Products(ListAPIView):
     serializer_class = serializers.ProductSerializer
-    pagination_class = CustomPagination
+    pagination_class = paginators.CustomPagination
 
     def get_queryset(self):
         products = models.Product.objects.showing_products().all()
-        if self.kwargs.get('category_slug'):
-            products = products.filter(subcategory__category__slug=self.kwargs['category_slug'])
-        if self.kwargs.get('subcategory_slug'):
-            products = products.filter(subcategory__slug=self.kwargs['subcategory_slug'])
+        if self.kwargs.get('slug'):
+            products = products.filter(Q(subcategory__category__slug=self.kwargs['slug']) | Q(subcategory__slug=self.kwargs['slug']))
         return products
 
 
-class CategoriesView(ListView, FormView):
-    template_name = 'products/categories.html'
-    context_object_name = 'product'
-    form_class = UserLoginForm
-    paginate_by = 2
-    queryset = products = models.Category.objects.all().order_by('-id')
+class CategoriesAPI(ListAPIView):
+    serializer_class = serializers.CategoriesSerializer
+    pagination_class = paginators.CategoriesPaginator
+    queryset = models.Category.objects.all()
 
 
 class DetailProductInfo(APIView):
