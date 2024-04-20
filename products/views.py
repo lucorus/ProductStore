@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, F
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import ListView, FormView
@@ -22,9 +22,17 @@ class Products(ListAPIView):
     pagination_class = paginators.CustomPagination
 
     def get_queryset(self):
-        products = models.Product.objects.showing_products().all()
-        if self.kwargs.get('slug'):
-            products = products.filter(Q(subcategory__category__slug=self.kwargs['slug']) | Q(subcategory__slug=self.kwargs['slug']))
+        min_price = self.request.GET.get('min_price') or 0
+        max_price = self.request.GET.get('max_price') or 99999999999
+        sorting = self.request.GET.get('sorting') or '-id'
+        category = self.request.GET.get('category') or 'Null'
+        subcategory = self.request.GET.get('subcategory') or 'Null'
+
+        products = models.Product.objects.showing_products().\
+            annotate(discount_price=F('price') - (F('price') * F('discount')/100))\
+            .filter(Q(discount_price__gte=min_price) & Q(discount_price__lte=max_price)).order_by(sorting)
+        if category != 'Null' or subcategory != 'Null':
+            products = products.filter(Q(subcategory__category__slug=category) | Q(subcategory__slug=subcategory))
         return products
 
 

@@ -46,3 +46,7 @@
 .subcategory-title {
     font-size: 24px;
 }
+
+a {
+    text-decoration: none;
+}

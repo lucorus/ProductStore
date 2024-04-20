@@ -9,7 +9,12 @@ fetch('/get_categories')
                     categoryElement.classList.add('category');
 
                     const title = document.createElement('h3');
-                    title.innerHTML = `<a href="${category.url}">${category.title}</a>`;
+                    title.innerHTML = `
+                        <form action="/products" method="get">
+                            <input type="hidden" name="category" value="${category.slug}">
+                            <button class="btn btn-warning" type="submit">${category.title}</button>
+                        </form>
+                    `;
                     categoryElement.appendChild(title);
 
                     const image = document.createElement('img');
@@ -18,12 +23,14 @@ fetch('/get_categories')
 
                     const subcategories = document.createElement('ul');
                     category.subcategories.forEach(subcategory => {
-                        const subcategoryItem = document.createElement('li');
-                        const subcategoryLink = document.createElement('a');
-                        subcategoryLink.href = subcategory.url;
-                        subcategoryLink.textContent = subcategory.title;
-                        subcategoryItem.appendChild(subcategoryLink);
-                        subcategories.appendChild(subcategoryItem);
+                        subcategories.innerHTML += `
+                            <li>
+                                <form action="/products" method="get">
+                                    <input type="hidden" name="subcategory" value="${ subcategory.slug }">
+                                    <button class="btn btn-dark" type="submit">${ subcategory.title }</button>
+                                </form>
+                            </li>
+                        `
                     });
 
                     categoryElement.appendChild(subcategories);

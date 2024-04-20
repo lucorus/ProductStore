@@ -3,20 +3,17 @@ from . import models
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    url = serializers.URLField(source='get_absolute_url')
-
     class Meta:
         model = models.Category
-        fields = ['title', 'slug', 'image', 'url']
+        fields = ['title', 'slug', 'image']
 
 
 class SubCategorySerializer(serializers.ModelSerializer):
-    url = serializers.CharField(source='get_absolute_url')
     category = CategorySerializer(many=False, read_only=False)
 
     class Meta:
         model = models.SubCategory
-        fields = ['title', 'slug', 'image', 'url', 'category']
+        fields = ['title', 'slug', 'image', 'category']
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -29,9 +26,9 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
-    url = serializers.URLField(source='get_absolute_url')
+    # url = serializers.URLField(source='get_absolute_url')
     subcategories = SubCategorySerializer(many=True)
 
     class Meta:
         model = models.Category
-        fields = ['title', 'slug', 'image', 'url', 'subcategories']
+        fields = ['title', 'slug', 'image', 'subcategories']

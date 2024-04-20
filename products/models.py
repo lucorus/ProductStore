@@ -18,8 +18,7 @@ class Product(models.Model):
     objects = CustomProductManager()
 
     def price_with_discount(self) -> int:
-        ans = round(self.price - (self.price * (self.discount/100)))
-        return ans
+        return round(self.price - (self.price * (self.discount/100)))
 
     def get_absolute_url(self):
         return reverse('products:product_detail', kwargs={'slug': self.slug})
@@ -38,8 +37,8 @@ class Category(models.Model):
     slug = models.SlugField()
     image = models.ImageField(upload_to='products/img/category/', verbose_name='Изображение')
 
-    def get_absolute_url(self):
-        return reverse('products:category_detail', kwargs={'slug': self.slug})
+    # def get_absolute_url(self):
+    #     return reverse('products:category_detail', kwargs={'slug': self.slug})
 
     def __str__(self):
         return self.title
@@ -56,8 +55,8 @@ class SubCategory(models.Model):
     image = models.ImageField(upload_to='products/img/subcategory/', verbose_name='Изображение')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='subcategories', verbose_name='Категория')
 
-    def get_absolute_url(self):
-        return reverse('products:category_detail', kwargs={'slug': self.slug})
+    # def get_absolute_url(self):
+    #     return reverse('products:category_detail', kwargs={'slug': self.slug})
 
     def __str__(self):
         return self.title
