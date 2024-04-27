@@ -44,7 +44,6 @@ class ChangeCountProductInBasket(LoginRequiredMixin, APIView):
 class DeleteBasket(LoginRequiredMixin, APIView):
     def get(self, request, product_slug):
         try:
-            print(product_slug)
             if product_slug == '__all__':
                 basket = models.Basket.objects.filter(owner=request.user)
             else:

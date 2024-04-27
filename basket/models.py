@@ -8,7 +8,7 @@ class Basket(models.Model):
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='basket', verbose_name='Владелец корзины')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='basket', verbose_name='Продукт')
     count = models.PositiveSmallIntegerField(default=1, verbose_name='Количество')
-    created_add = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
 
     def get_count_products_in_basket(self) -> int:
         return Basket.objects.filter(owner=self.owner).count()

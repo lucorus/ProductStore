@@ -78,6 +78,14 @@ DATABASES = {
         'PASSWORD': env('PASSWORD'),
         'HOST': env('HOST'),
         'PORT': 5432,
+    },
+    'TEST': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('TEST_NAME'),
+        'USER': env('USER'),
+        'PASSWORD': env('PASSWORD'),
+        'HOST': env('HOST'),
+        'PORT': 5432,
     }
 }
 
@@ -116,6 +124,8 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+LOGIN_URL = 'products:main_page'
 
 
 # Static files (CSS, JavaScript, Images)

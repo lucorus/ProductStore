@@ -31,8 +31,10 @@ class Products(ListAPIView):
         products = models.Product.objects.showing_products().\
             annotate(discount_price=F('price') - (F('price') * F('discount')/100))\
             .filter(Q(discount_price__gte=min_price) & Q(discount_price__lte=max_price)).order_by(sorting)
-        if category != 'Null' or subcategory != 'Null':
-            products = products.filter(Q(subcategory__category__slug=category) | Q(subcategory__slug=subcategory))
+        if category != 'Null':
+            products = products.filter(subcategory__category__slug=category)
+        if subcategory != 'Null':
+            products = products.filter(subcategory__slug=subcategory)
         return products
 
 
@@ -44,6 +46,10 @@ class CategoriesAPI(ListAPIView):
 
 class DetailProductInfo(APIView):
     def get(self, request, slug):
-        product = models.Product.objects.get(slug=slug)
-        serializer = serializers.ProductSerializer(product)
-        return JsonResponse({'product': serializer.data})
+        try:
+            product = models.Product.objects.get(slug=slug)
+            serializer = serializers.ProductSerializer(product)
+            return JsonResponse({'status': 'success', 'product': serializer.data})
+        except Exception as ex:
+            print(ex)
+            return JsonResponse({'status': 'error', 'message': 'product not exists'})

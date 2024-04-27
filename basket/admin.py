@@ -5,5 +5,5 @@ from . import models
 
 @register(models.Basket)
 class BasketAdmin(admin.ModelAdmin):
-    list_display = ['id', 'owner', 'product', 'count', 'created_add']
+    list_display = ['id', 'owner', 'product', 'count', 'created_at']
 

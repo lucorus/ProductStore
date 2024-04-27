@@ -19,18 +19,6 @@ class ProfileView(LoginRequiredMixin, ListView):
         return Basket.objects.filter(owner=self.request.user)
 
 
-class LoginView(APIView):
-    def post(self, request):
-        try:
-            user = models.CustomUser.objects.get(Q(email=request.POST['username']) | Q(username=request.POST['username']))
-            if user and user.check_password(request.POST['password']):
-                login(request, user)
-        except Exception as ex:
-            print(ex)
-        finally:
-            return redirect('products:main_page')
-
-
 class RegistrationView(APIView):
     def post(self, request):
         username = str(request.POST.get('username'))
@@ -60,7 +48,7 @@ class RegistrationView(APIView):
         return render(request, 'users/register.html')
 
 
-class UserLoginView(APIView):
+class LoginView(APIView):
     def post(self, request):
         try:
             user = models.CustomUser.objects.get(Q(email=request.POST['username']) | Q(username=request.POST['username']))

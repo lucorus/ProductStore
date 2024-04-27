@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils.text import slugify
+from slugify import slugify
 # from products.models import Product, IntegerRangeField
 
 
@@ -14,7 +14,7 @@ class CustomUser(AbstractUser):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.username)
-        super(CustomUser, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Пользователь'
