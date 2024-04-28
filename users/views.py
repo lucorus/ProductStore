@@ -8,6 +8,7 @@ from django.views.generic import DetailView, ListView
 from rest_framework.views import APIView
 from . import models, forms
 from basket.models import Basket
+from products.utils import get_products_by_filter
 
 
 class ProfileView(LoginRequiredMixin, ListView):
@@ -16,7 +17,15 @@ class ProfileView(LoginRequiredMixin, ListView):
     context_object_name = 'user'
 
     def get_queryset(self):
-        return Basket.objects.filter(owner=self.request.user)
+        sorting = self.request.GET.get('sorting') or '-id'
+        if sorting[0] == '-':
+            reverse = '-'
+            sorting = sorting.replace('-', '')
+        else:
+            reverse = ''
+        products = get_products_by_filter(self.request)
+        basket = Basket.objects.filter(owner=self.request.user, product__in=products).order_by(reverse + 'product__' + sorting)
+        return basket
 
 
 class RegistrationView(APIView):

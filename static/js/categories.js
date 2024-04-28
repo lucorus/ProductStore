@@ -1,6 +1,8 @@
 fetch('/get_categories')
             .then(response => response.json())
             .then(data => {
+                const nextPage = data.next;
+                const previousPage = data.previous;
                 const categories = data.results;
                 const categoryContainer = document.getElementById('category-container');
 
@@ -36,6 +38,18 @@ fetch('/get_categories')
                     categoryElement.appendChild(subcategories);
                     categoryContainer.appendChild(categoryElement);
                 });
+                if(previousPage)
+                {
+                    const center = document.createElement('center');
+                    center.innerHTML = `<a href="${previousPage}">Предыдущая страница</a>`;
+                    categoryContainer.appendChild(center);
+                }
+                if(nextPage)
+                {
+                    const center = document.createElement('center');
+                    center.innerHTML = `<a href="${nextPage}">Следующая страница</a>`;
+                    categoryContainer.appendChild(center);
+                }
             })
             .catch(error => {
                 console.error('Error fetching data:', error);

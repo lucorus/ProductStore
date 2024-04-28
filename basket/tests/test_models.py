@@ -18,11 +18,10 @@ class TestBasket(TestCase):
         self.user = CustomUser.objects.create(username='username', email='mail@gmail.com', password='password1234')
         self.user.save()
 
-        self.basket = Basket.objects.create(owner=self.user, product=self.product)
+        self.basket = Basket.objects.create(owner=self.user, product=self.product, count=1)
         self.basket.save()
 
-    def tearDown(self):
-        self.basket.delete()
+    def tearDown(self) -> None:
         self.product.delete()
         self.subcategory.delete()
         self.category.delete()
@@ -38,6 +37,5 @@ class TestBasket(TestCase):
     def test_negative_count(self):
         try:
             self.basket.count = -1
-            self.basket.save()
         except Exception as ex:
             self.assertEqual(type(ex), IntegrityError)

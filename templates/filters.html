@@ -10,18 +10,22 @@
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
+        {% if user != request.user %}
+        <form id="filters" action="{% url 'users:profile' %}" method="get" enctype="multipart/form-data" class="post-form">
+        {% else %}
         <form id="filters" action="{% url 'products:products' %}" method="get" enctype="multipart/form-data" class="post-form">
+        {% endif %}
             {% csrf_token %}
             <b>Цена:</b>
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Минимальная" id="min_price" name="min_price">
+                <input type="text" class="form-control" placeholder="Минимальная" name="min_price">
                 <input type="text" class="form-control" placeholder="Максимальная" name="max_price">
             </div>
 
             <b>Сортировать по:</b>
             <select name="sorting" class="form-select" aria-label="Default select example">
-                <option value="-id">Сначала старые</option>
-                <option value="id" selected>Сначала новые</option>
+                <option value="id">Сначала старые</option>
+                <option value="-id" selected>Сначала новые</option>
                 <option value="-price">Сначала дорогие</option>
                 <option value="price">Сначала дешёвые</option>
                 <option value="-discount">Самая большая скидка</option>
@@ -46,6 +50,9 @@
                     <option value="{{ item.slug }}">{{ item.title }}</option>
                 {% endfor %}
             </select>
+
+            <b>Поиск по слову</b>
+            <input type="text" class="form-control" placeholder="" name="word">
 
         <br>
         <button class="btn btn-dark" type="submit">Подтвердить</button>

@@ -7,6 +7,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from users.forms import UserLoginForm
 from . import models, serializers, paginators
+from . import utils
 
 
 def main_page(request):
@@ -22,20 +23,7 @@ class Products(ListAPIView):
     pagination_class = paginators.CustomPagination
 
     def get_queryset(self):
-        min_price = self.request.GET.get('min_price') or 0
-        max_price = self.request.GET.get('max_price') or 99999999999
-        sorting = self.request.GET.get('sorting') or '-id'
-        category = self.request.GET.get('category') or 'Null'
-        subcategory = self.request.GET.get('subcategory') or 'Null'
-
-        products = models.Product.objects.showing_products().\
-            annotate(discount_price=F('price') - (F('price') * F('discount')/100))\
-            .filter(Q(discount_price__gte=min_price) & Q(discount_price__lte=max_price)).order_by(sorting)
-        if category != 'Null':
-            products = products.filter(subcategory__category__slug=category)
-        if subcategory != 'Null':
-            products = products.filter(subcategory__slug=subcategory)
-        return products
+        return utils.get_products_by_filter(self.request)
 
 
 class CategoriesAPI(ListAPIView):

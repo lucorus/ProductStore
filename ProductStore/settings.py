@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
     'rest_framework',
 
     'basket',
@@ -88,6 +89,10 @@ DATABASES = {
         'PORT': 5432,
     }
 }
+
+import sys
+if 'test' in sys.argv:
+    DATABASES['default'] = DATABASES['TEST']
 
 
 # Password validation
