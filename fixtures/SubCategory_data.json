@@ -1,0 +1,52 @@
+[
+  {
+    "model": "products.subcategory",
+    "pk": 1,
+    "fields": {
+      "title": "Молоко",
+      "slug": "moloko",
+      "image": "products/img/subcategory/dark-grey.png",
+      "category": 1
+    }
+  },
+  {
+    "model": "products.subcategory",
+    "pk": 2,
+    "fields": {
+      "title": "Сыр",
+      "slug": "syr",
+      "image": "products/img/subcategory/dark-grey_rGxzRjL.png",
+      "category": 1
+    }
+  },
+  {
+    "model": "products.subcategory",
+    "pk": 31,
+    "fields": {
+      "title": "Стейки",
+      "slug": "stejki",
+      "image": "products/img/subcategory/dark-grey_jsHzkt7.png",
+      "category": 34
+    }
+  },
+  {
+    "model": "products.subcategory",
+    "pk": 38,
+    "fields": {
+      "title": "Яблоки",
+      "slug": "iabloki",
+      "image": "products/img/subcategory/dark-grey_Jumernv.png",
+      "category": 41
+    }
+  },
+  {
+    "model": "products.subcategory",
+    "pk": 54,
+    "fields": {
+      "title": "Выпечка",
+      "slug": "vypechka",
+      "image": "products/img/subcategory/dark-grey_XXCsBnM.png",
+      "category": 58
+    }
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "model": "basket.basket",
+    "pk": 14,
+    "fields": {
+      "owner": 1,
+      "product": 1,
+      "count": 2,
+      "created_at": "2024-04-19T18:20:32.314Z"
+    }
+  },
+  {
+    "model": "basket.basket",
+    "pk": 15,
+    "fields": {
+      "owner": 1,
+      "product": 2,
+      "count": 1,
+      "created_at": "2024-04-19T18:21:55.288Z"
+    }
+  },
+  {
+    "model": "basket.basket",
+    "pk": 38,
+    "fields": {
+      "owner": 1,
+      "product": 30,
+      "count": 1,
+      "created_at": "2024-04-27T15:25:46.388Z"
+    }
+  }
+]

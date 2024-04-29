@@ -1,0 +1,54 @@
+[
+  {
+    "model": "products.product",
+    "pk": 1,
+    "fields": {
+      "title": "какое-то молоко",
+      "slug": "kakoe-to-moloko",
+      "price": 200,
+      "photo": "products/img/products/grey_s6pXUAp.png",
+      "subcategory": 1,
+      "discount": "40.00",
+      "showing": true
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 2,
+    "fields": {
+      "title": "Сыр",
+      "slug": "syr",
+      "price": 300,
+      "photo": "products/img/products/grey_MY10dnT.png",
+      "subcategory": 2,
+      "discount": "0.00",
+      "showing": true
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 30,
+    "fields": {
+      "title": "какой-то стейк",
+      "slug": "kakoi-to-steik",
+      "price": 500,
+      "photo": "products/img/products/grey_WNkDQuV.png",
+      "subcategory": 31,
+      "discount": "5.00",
+      "showing": true
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 52,
+    "fields": {
+      "title": "Хлеб",
+      "slug": "khleb",
+      "price": 50,
+      "photo": "products/img/products/grey_DWsjxtj.png",
+      "subcategory": 54,
+      "discount": "0.00",
+      "showing": true
+    }
+  }
+]

@@ -1,0 +1,47 @@
+[
+  {
+    "model": "products.category",
+    "pk": 1,
+    "fields": {
+      "title": "Молочные продукты",
+      "slug": "molochnye-produkty",
+      "image": "products/img/category/black.png"
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 34,
+    "fields": {
+      "title": "Мясные изделия",
+      "slug": "miasnye-izdeliia",
+      "image": "products/img/category/black_pOgI2RE.png"
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 41,
+    "fields": {
+      "title": "Фрукты",
+      "slug": "frukty",
+      "image": "products/img/category/black_0OlVK7y.png"
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 42,
+    "fields": {
+      "title": "Овощи",
+      "slug": "ovoshchi",
+      "image": "products/img/category/black_93gjTy0.png"
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 58,
+    "fields": {
+      "title": "Мучные изделия",
+      "slug": "muchnye-izdeliia",
+      "image": "products/img/category/black_fn2aQUi.png"
+    }
+  }
+]
