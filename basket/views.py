@@ -4,6 +4,9 @@ from rest_framework.views import APIView
 from products.models import Product
 from users.models import CustomUser
 from . import models
+import logging
+
+logger = logging.getLogger('main')
 
 
 class AddBasket(LoginRequiredMixin, APIView):
@@ -15,7 +18,7 @@ class AddBasket(LoginRequiredMixin, APIView):
                 return JsonResponse({'status': 'success'})
             return JsonResponse({'status': 'error', 'message': 'product does not exists'})
         except Exception as ex:
-            print(ex)
+            logger.error(ex)
             return JsonResponse({'status': 'error'})
 
 
@@ -37,7 +40,7 @@ class ChangeCountProductInBasket(LoginRequiredMixin, APIView):
                 basket.save()
             return JsonResponse({'status': 'success'})
         except Exception as ex:
-            print(ex)
+            logger.error(ex)
             return JsonResponse({'status': 'error'})
 
 
@@ -51,5 +54,5 @@ class DeleteBasket(LoginRequiredMixin, APIView):
             basket.delete()
             return JsonResponse({'status': 'success'})
         except Exception as ex:
-            print(ex)
+            logger.error(ex)
             return JsonResponse({'status': 'error'})

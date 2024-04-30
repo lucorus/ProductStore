@@ -1,13 +1,13 @@
-from django.db.models import Q, F
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.views.generic import ListView, FormView
-from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from users.forms import UserLoginForm
 from . import models, serializers, paginators
 from . import utils
+import logging
+
+logger = logging.getLogger('main')
 
 
 def main_page(request):
@@ -35,9 +35,13 @@ class CategoriesAPI(ListAPIView):
 class DetailProductInfo(APIView):
     def get(self, request, slug):
         try:
-            product = models.Product.objects.get(slug=slug)
+            product = models.Product.objects.filter(slug=slug).first()
+            if not product:
+                raise ZeroDivisionError('product not exists')
             serializer = serializers.ProductSerializer(product)
             return JsonResponse({'status': 'success', 'product': serializer.data})
-        except Exception as ex:
-            print(ex)
+        except ZeroDivisionError:
             return JsonResponse({'status': 'error', 'message': 'product not exists'})
+        except Exception as ex:
+            logger.error(ex)
+            return JsonResponse({'status': 'error', 'message': 'unknown error'})

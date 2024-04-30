@@ -9,6 +9,9 @@ from rest_framework.views import APIView
 from . import models, forms
 from basket.models import Basket
 from products.utils import get_products_by_filter
+import logging
+
+logger = logging.getLogger('main')
 
 
 class ProfileView(LoginRequiredMixin, ListView):
@@ -17,41 +20,49 @@ class ProfileView(LoginRequiredMixin, ListView):
     context_object_name = 'user'
 
     def get_queryset(self):
-        sorting = self.request.GET.get('sorting') or '-id'
-        if sorting[0] == '-':
-            reverse = '-'
-            sorting = sorting.replace('-', '')
-        else:
-            reverse = ''
-        products = get_products_by_filter(self.request)
-        basket = Basket.objects.filter(owner=self.request.user, product__in=products).order_by(reverse + 'product__' + sorting)
-        return basket
+        try:
+            sorting = self.request.GET.get('sorting') or '-id'
+            if sorting[0] == '-':
+                reverse = '-'
+                sorting = sorting.replace('-', '')
+            else:
+                reverse = ''
+            products = get_products_by_filter(self.request)
+            basket = Basket.objects.filter(owner=self.request.user, product__in=products).order_by(reverse + 'product__' + sorting)
+            return basket
+        except Exception as ex:
+            logger.error(ex)
+            return []
 
 
 class RegistrationView(APIView):
     def post(self, request):
-        username = str(request.POST.get('username'))
-        password = str(request.POST.get('password'))
-        email = str(request.POST.get('email'))
+        try:
+            username = str(request.POST.get('username'))
+            password = str(request.POST.get('password'))
+            email = str(request.POST.get('email'))
 
-        # Проверка данных формы
-        errors = {}
-        if models.CustomUser.objects.filter(username=username).exists():
-            errors['username'] = 'Пользователь с таким именем уже существует!'
-        if len(password) < 8:
-            errors['password'] = 'Пароль должен состоять минимум из 8 символов'
-        if models.CustomUser.objects.filter(email=email).exists():
-            errors['email'] = 'Пользователь с такой почтой уже существует!'
+            # Проверка данных формы
+            errors = {}
+            if models.CustomUser.objects.filter(username=username).exists():
+                errors['username'] = 'Пользователь с таким именем уже существует!'
+            if len(password) < 8:
+                errors['password'] = 'Пароль должен состоять минимум из 8 символов'
+            if models.CustomUser.objects.filter(email=email).exists():
+                errors['email'] = 'Пользователь с такой почтой уже существует!'
 
-        if errors:
-            return JsonResponse({'status': 'error', 'errors': errors})
-        else:
-            user = models.CustomUser.objects.create_user(username=username, password=password,
-                                                         email=email)
-            user.save()
-            login(request, user)
+            if errors:
+                return JsonResponse({'status': 'error', 'errors': errors})
+            else:
+                user = models.CustomUser.objects.create_user(username=username, password=password,
+                                                             email=email)
+                user.save()
+                login(request, user)
 
-            return JsonResponse({'status': 'success'})
+                return JsonResponse({'status': 'success'})
+        except Exception as ex:
+            logger.error(ex)
+            return JsonResponse({'status': 'error'})
 
     def get(self, request):
         return render(request, 'users/register.html')
@@ -66,7 +77,7 @@ class LoginView(APIView):
                 return JsonResponse({'status': 'success'})
             return JsonResponse({'status': 'error', 'message': 'incorrect password'})
         except Exception as ex:
-            print(ex)
+            logger.error(ex)
             return JsonResponse({'status': 'error'})
         finally:
             return redirect('products:main_page')

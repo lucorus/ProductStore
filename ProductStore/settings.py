@@ -1,3 +1,4 @@
+from .formatters import CustomJsonFormatter
 import os
 from os.path import join
 from pathlib import Path
@@ -47,6 +48,40 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'main_formatter': {
+            'format': '{asctime} - {levelname} - {module} - {message}',
+            'style': '{'
+        },
+        'json_formatter': {
+            '()': CustomJsonFormatter,
+        }
+    },
+
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'main_formatter',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': 'information.log',
+            'formatter': 'json_formatter',
+        },
+    },
+
+    'loggers': {
+        'main': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        }
+    },
+}
 
 ROOT_URLCONF = 'ProductStore.urls'
 
