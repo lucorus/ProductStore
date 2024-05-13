@@ -28,7 +28,7 @@ class ProfileView(LoginRequiredMixin, ListView):
             else:
                 reverse = ''
             products = get_products_by_filter(self.request)
-            basket = Basket.objects.filter(owner=self.request.user, product__in=products).order_by(reverse + 'product__' + sorting)
+            basket = Basket.objects.filter(owner=self.request.user, product__in=products).order_by(reverse + 'product__' + sorting).select_related('owner', 'product')
             return basket
         except Exception as ex:
             logger.error(ex)

@@ -1,12 +1,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from slugify import slugify
-# from products.models import Product, IntegerRangeField
+from products.models import Product
 
 
 class CustomUser(AbstractUser):
     username = models.CharField(max_length=40, unique=True, blank=True, verbose_name='Имя пользователя')
-    # favourites = models.ManyToManyField(Product, related_name='users', blank=True, verbose_name='Избранное')
+    favorites = models.ManyToManyField(Product, related_name='users', blank=True, verbose_name='Избранное')
     slug = models.SlugField()
 
     def __str__(self):

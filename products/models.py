@@ -27,7 +27,7 @@ class Product(models.Model):
         return round(self.price - (self.price * (self.discount/100)))
 
     def get_absolute_url(self):
-        return reverse('products:product_detail', kwargs={'slug': self.slug})
+        return reverse('products:product_detail_view', kwargs={'slug': self.slug})
 
     def __str__(self):
         return self.title

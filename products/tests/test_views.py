@@ -11,8 +11,7 @@ class TestProducts(TestCase):
 
     def test_get_all_products(self):
         response = self.client.get(reverse('products:products'))
-        data = response.content.decode('utf-8')
-        data = json.loads(data)
+        data = json.loads(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(type(data['count']), int)
         self.assertIsNone(data['previous'])
@@ -21,8 +20,7 @@ class TestProducts(TestCase):
 
     def test_get_products_in_category(self):
         response = self.client.get(reverse('products:products'), data={'category': 'myaso'})
-        data = response.content.decode('utf-8')
-        data = json.loads(data)
+        data = json.loads(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(type(data['count']), int)
         self.assertIsNone(data['previous'])
@@ -31,8 +29,7 @@ class TestProducts(TestCase):
 
     def test_get_incorrect_category_and_subcategory(self):
         response = self.client.get(reverse('products:products'), data={'category': 'myaso', 'subcategory': 'syr'})
-        data = response.content.decode('utf-8')
-        data = json.loads(data)
+        data = json.loads(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['count'], 0)
         self.assertIsNone(data['previous'])
@@ -46,8 +43,7 @@ class TestCategories(TestCase):
 
     def test_get_data(self):
         response = self.client.get(reverse('products:get_categories'))
-        data = response.content.decode('utf-8')
-        data = json.loads(data)
+        data = json.loads(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(type(data['count']), int)
         self.assertIsNone(data['previous'])
@@ -68,15 +64,13 @@ class DetailProductTest(TestCase):
 
     def test_get_data(self):
         response = self.client.get(reverse('products:product_detail', kwargs={'slug': 'title'}))
-        data = response.content.decode('utf-8')
-        data = json.loads(data)
+        data = json.loads(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['product']['title'], self.product.title)
         self.assertEqual(data['product']['subcategory']['title'], self.product.subcategory.title)
 
     def test_get_not_exists_product(self):
         response = self.client.get(reverse('products:product_detail', kwargs={'slug': 'not_exists_slug'}))
-        data = response.content.decode('utf-8')
-        data = json.loads(data)
+        data = json.loads(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['status'], 'error')

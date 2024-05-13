@@ -18,6 +18,10 @@ def categories(request):
     return render(request, 'products/categories.html', {'form': UserLoginForm})
 
 
+def product_detail(request, slug):
+    return render(request, 'products/product.html', {'form': UserLoginForm, 'slug': slug})
+
+
 class Products(ListAPIView):
     serializer_class = serializers.ProductSerializer
     pagination_class = paginators.CustomPagination
@@ -35,7 +39,7 @@ class CategoriesAPI(ListAPIView):
 class DetailProductInfo(APIView):
     def get(self, request, slug):
         try:
-            product = models.Product.objects.filter(slug=slug).first()
+            product = models.Product.objects.filter(slug=slug).select_related('subcategory').first()
             if not product:
                 raise ZeroDivisionError('product not exists')
             serializer = serializers.ProductSerializer(product)

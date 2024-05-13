@@ -31,8 +31,7 @@ class TestRegistration(TestCase):
         response = self.client.post(reverse('users:register'), data={'username': 'username',
                                                                      'password': 'password_1234',
                                                                      'email': 'mail@gmail.com'})
-        data = response.content.decode('utf-8')
-        data = json.loads(data)
+        data = json.loads(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['status'], 'success')
 
@@ -40,8 +39,7 @@ class TestRegistration(TestCase):
         response = self.client.post(reverse('users:register'), data={'username': 'username',
                                                                      'password': 'none',
                                                                      'email': 'mail@gmail.com'})
-        data = response.content.decode('utf-8')
-        data = json.loads(data)
+        data = json.loads(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['status'], 'error')
 

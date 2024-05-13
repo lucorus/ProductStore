@@ -15,7 +15,7 @@ def get_products_by_filter(request):
         category = request.GET.get('category') or 'Null'
         subcategory = request.GET.get('subcategory') or 'Null'
 
-        products = models.Product.objects.showing_products(). \
+        products = models.Product.objects.showing_products().select_related('subcategory'). \
             annotate(discount_price=F('price') - (F('price') * F('discount') / 100)) \
             .filter(Q(discount_price__gte=min_price) & Q(discount_price__lte=max_price)).order_by(sorting)
         if category != 'Null':
