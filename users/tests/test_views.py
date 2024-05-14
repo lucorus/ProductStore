@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from users.models import CustomUser
+from products.models import Product, Category, SubCategory
 import json
 
 
@@ -89,3 +90,50 @@ class UserLogoutViewTests(TestCase):
         self.client.logout()
         response = self.client.get(reverse('users:logout'))
         self.assertEqual(response.status_code, 302)
+
+
+class TestAddToFavorites(TestCase):
+    def setUp(self):
+        self.category = Category.objects.create(title='Category')
+        self.category.save()
+        self.subcategory = SubCategory.objects.create(title='Subcategory', category=self.category)
+        self.subcategory.save()
+        self.product = Product.objects.create(title='Title', slug='title', price=1000, discount=10, subcategory=self.subcategory)
+        self.product.save()
+        self.user = CustomUser.objects.create_user(username='testuser', password='testpassword')
+        self.client.login(username='testuser', password='testpassword')
+
+    def tearDown(self):
+        self.user.delete()
+        self.product.delete()
+        self.subcategory.delete()
+        self.category.delete()
+
+    def test_correct(self):
+        response = self.client.get(reverse('users:add_to_favorites'), data={'product_slug': 'title'})
+        data = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['status'], 'success')
+        self.assertEqual(self.user.favorites.first().slug, 'title')
+
+    def test_double_add_in_favorites(self):
+        response = self.client.get(reverse('users:add_to_favorites'), data={'product_slug': 'title'})
+        response = self.client.get(reverse('users:add_to_favorites'), data={'product_slug': 'title'})
+        data = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['status'], 'success')
+        self.assertIsNone(self.user.favorites.first())
+
+    def test_without_data(self):
+        response = self.client.get(reverse('users:add_to_favorites'))
+        data = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['status'], 'error')
+        self.assertIsNone(self.user.favorites.first())
+
+    def test_with_not_found_product(self):
+        response = self.client.get(reverse('users:add_to_favorites'), data={'product_slug': 'not_found_slug'})
+        data = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['status'], 'error')
+        self.assertIsNone(self.user.favorites.first())

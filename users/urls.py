@@ -9,6 +9,7 @@ urlpatterns = [
     path('login', views.LoginView.as_view(), name='login'),
     path('logout', views.user_logout, name='logout'),
     path('registration', views.RegistrationView.as_view(), name='register'),
+    path('add_to_favorites', views.AddProductToFavorites.as_view(), name='add_to_favorites'),
 ]
 
 

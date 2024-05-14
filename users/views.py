@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from . import models, forms
 from basket.models import Basket
 from products.utils import get_products_by_filter
+from products.models import Product
 import logging
 
 logger = logging.getLogger('main')
@@ -87,3 +88,20 @@ class LoginView(APIView):
 def user_logout(request):
     logout(request)
     return redirect('products:main_page')
+
+
+class AddProductToFavorites(LoginRequiredMixin, APIView):
+    def get(self, request):
+        try:
+            slug = request.GET.get('product_slug') or None
+            if not slug:
+                raise Exception('Not found slug')
+            product = Product.objects.get(slug=slug)
+            # если товар уже в избранном, то удаляем его
+            if request.user.favorites.filter(slug=slug).exists():
+                request.user.favorites.remove(product)
+            else:
+                request.user.favorites.add(product)
+            return JsonResponse({'status': 'success'})
+        except:
+            return JsonResponse({'status': 'error', 'message': 'product not found'})

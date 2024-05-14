@@ -26,4 +26,17 @@ def get_count(request, slug: str) -> int:
         else:
             return 0
     except Exception as ex:
+        print(ex)
         return 0
+
+
+@register.simple_tag(name='in_favorites')
+def in_favorites(request, slug: str) -> bool:
+    try:
+        if request.user.is_authenticated:
+            if request.user.favorites.filter(slug=slug).exists():
+                return True
+        return False
+    except Exception as ex:
+        print(ex)
+        return False

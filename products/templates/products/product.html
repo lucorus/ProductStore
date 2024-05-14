@@ -5,66 +5,35 @@
 <head>
 <meta charset="UTF-8">
 <title>Информация о продукте</title>
-<style>
-  body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-  }
-  #product-info {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  }
-  #product-info h1 {
-    color: #333;
-    font-size: 24px;
-  }
-  #product-info img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 4px;
-  }
-  #product-info p {
-    color: #666;
-    line-height: 1.6;
-  }
-  .price {
-    color: #e44d26;
-    font-weight: bold;
-  }
-  .discount {
-    color: #4CAF50;
-  }
-</style>
-
+    <link rel="stylesheet" type="text/css" href="{% static 'css/product_detail_style.css' %}">
+    {% include "add_bootstrap.html" %}
 </head>
-<body>
+<body style="background-color:#f5f5f5">
 {% include "navbar.html" %}
-{% include "add_bootstrap.html" %}
+
 
 <div id="product-info">
-  <h1 id="title">
-
-
-
-  </h1>
+  <h1 id="title"></h1>
     <h3>{% get_count request slug as get_count %}
       {% if get_count < 1 and request.user.is_authenticated %}
          <a class="discount" style="color: LimeGreen; margin-right: 4px; text-decorate: false;" name="add_product_in_basket"
-            onclick="addProductInBasket('{{ slug }}'); this.style.display='none';" href="#">
-            +
-         </a>
+            onclick="addProductInBasket('{{ slug }}'); this.style.display='none';" href="#">+</a>
+        {% else %}
+        <a class="discount" style="color: red; margin-right: 4px; text-decorate: false;" name="add_product_in_basket"
+           onclick="deleteProductFromBasket('{{ slug }}'); this.style.display='none';" href="#">X</a>
       {% endif %}
-        <a style="margin-right: 10px; color: red;", name="add_favorites" onclick="" href="#">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill"
-                 viewBox="0 0 16 16">
+
+        {% in_favorites request slug as in_favorites %}
+        <a style="margin-right: 10px; color: red;" onclick="addProductToFavorites('{{ slug }}')" href="#">
+            {% if in_favorites %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill"  viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
             </svg>
+            {% else %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+            </svg>
+            {% endif %}
         </a>
     </h3>
   <img id="photo" src="">
@@ -74,24 +43,7 @@
 </div>
 
 
-
-
-
-<div style="position: fixed; bottom: 20px; right: 20px; padding: 10px;
-            background-color: #bbbdb9; color: black; border-radius: 5px;
-            display: none;" id="alert-container">
-    Товар добавлен в корзину
-    <a href="{% url 'users:profile' %}">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right"
-             viewBox="0 0 16 16">
-            <path fill-rule="evenodd"
-                  d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
-        </svg>
-    </a>
-</div>
-
-
-
+<script src="{% static 'js/favorites.js' %}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   fetch('/product_api/{{ slug }}')
@@ -106,29 +58,8 @@ document.addEventListener('DOMContentLoaded', function() {
     .catch(error => console.error('Ошибка:', error));
 });
 </script>
-<script src="{% static 'js/basket.js' %}"></script>
-<script>
-
-function addProductToFavorites(productSlug) {
-    $.ajax({
-        url: '/user/add_to_favorites',
-        type: 'GET',
-        data: {
-            'product_slug': productSlug
-        },
-        success: function(response) {
-                // Обработка успешного добавления товара в сессию
-        },
-        error: function() {
-            // Обработка ошибки AJAX запроса
-        }
-    });
-}
-</script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-
-
+<script src="{% static 'js/basket.js' %}"></script>
 </body>
 </html>
 
