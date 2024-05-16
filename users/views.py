@@ -5,8 +5,9 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views.generic import DetailView, ListView
+from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
-from . import models, forms
+from . import models, forms, serializers, paginators
 from basket.models import Basket
 from products.utils import get_products_by_filter
 from products.models import Product
@@ -105,3 +106,36 @@ class AddProductToFavorites(LoginRequiredMixin, APIView):
             return JsonResponse({'status': 'success'})
         except:
             return JsonResponse({'status': 'error', 'message': 'product not found'})
+
+
+class CreateComment(LoginRequiredMixin, APIView):
+    def post(self, request, product_slug):
+        try:
+            product = Product.objects.get(slug=product_slug)
+            text = request.POST.get('text') or None
+            estimation = int(request.POST.get('estimation')) or None
+            answer = request.POST.get('comment_id') or None
+
+            if answer:
+                comment = models.Comment.objects.create(author=request.user, product=product, text=text)
+                answer = models.Comment.objects.get(id=int(answer))
+                answer.answers.add(comment)
+            else:
+                comment = models.Comment.objects.create(author=request.user, product=product, text=text,
+                                                        estimation=estimation)
+            return JsonResponse({'status': 'success'})
+        except Exception as ex:
+            logger.error(ex)
+            return JsonResponse({'status': 'error'})
+
+
+class GetComments(ListAPIView):
+    lookup_field = 'product_slug'
+    serializer_class = serializers.CommentSerializer
+    pagination_class = paginators.CommentPaginator
+
+    def get_queryset(self):
+        comments = models.Comment.objects.select_related('author', 'product')\
+            .filter(product__slug=self.kwargs['product_slug']).filter(answers=None)
+        return comments
+

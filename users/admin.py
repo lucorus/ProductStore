@@ -7,3 +7,8 @@ from . import models
 class UserAdmin(admin.ModelAdmin):
     list_display = ['pk', 'username', 'slug']
     prepopulated_fields = {'slug': ('username',)}
+
+
+@register(models.Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'author', 'product']
