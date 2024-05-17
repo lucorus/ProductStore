@@ -1,6 +1,6 @@
 from django.urls import reverse
+from django.db.models import Q
 from django.db import models
-# from django.utils.text import slugify
 from slugify import slugify
 
 
@@ -22,6 +22,15 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
         super().save(*args, **kwargs)
+
+    # получаем среднее арифметическое всех оценок продукта
+    def get_estimation(self) -> float:
+        try:
+            estimations = list(self.comments.filter(Q(product__pk=self.pk) & Q(answers=None)).values('estimation'))
+            estimations = [int(item['estimation']) for item in estimations]
+            return round(sum(estimations) / len(estimations), 2)
+        except:
+            return 0
 
     def price_with_discount(self) -> int:
         return round(self.price - (self.price * (self.discount/100)))

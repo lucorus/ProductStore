@@ -11,10 +11,10 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(many=False, read_only=True)
-    product = ProductSerializer(many=False, read_only=True)
+    # product = ProductSerializer(many=False, read_only=True)
     cnt_answers = serializers.IntegerField(source='count_answers')
     # answers = serializers.ListField(source='get_answers')
 
     class Meta:
         model = models.Comment
-        fields = ['id', 'author', 'product', 'text', 'estimation', 'cnt_answers']
+        fields = ['id', 'author', 'text', 'estimation', 'cnt_answers']

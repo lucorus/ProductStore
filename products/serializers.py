@@ -18,11 +18,12 @@ class SubCategorySerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='get_absolute_url')
+    estimation = serializers.DecimalField(source='get_estimation', decimal_places=2, max_digits=10)
     subcategory = SubCategorySerializer(many=False, read_only=True)
 
     class Meta:
         model = models.Product
-        fields = ['title', 'slug', 'price', 'discount', 'photo', 'url', 'subcategory']
+        fields = ['title', 'slug', 'price', 'discount', 'photo', 'estimation', 'url', 'subcategory']
 
 
 class CategoriesSerializer(serializers.ModelSerializer):

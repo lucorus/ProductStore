@@ -113,16 +113,18 @@ class CreateComment(LoginRequiredMixin, APIView):
         try:
             product = Product.objects.get(slug=product_slug)
             text = request.POST.get('text') or None
-            estimation = int(request.POST.get('estimation')) or None
-            answer = request.POST.get('comment_id') or None
+            estimation = request.POST.get('estimation') or None
+            question = request.POST.get('comment_id') or None
 
-            if answer:
-                comment = models.Comment.objects.create(author=request.user, product=product, text=text)
-                answer = models.Comment.objects.get(id=int(answer))
-                answer.answers.add(comment)
+            if question:
+                # если написанный комментарий - ответ на другой комментарий (вопрос)
+                question = models.Comment.objects.get(pk=question)
+                question.answers.add(
+                    models.Comment.objects.create(author=request.user, product=product, text=text, estimation=0)
+                )
+                question.save()
             else:
-                comment = models.Comment.objects.create(author=request.user, product=product, text=text,
-                                                        estimation=estimation)
+                comment = models.Comment.objects.create(author=request.user, product=product, text=text, estimation=estimation)
             return JsonResponse({'status': 'success'})
         except Exception as ex:
             logger.error(ex)
@@ -135,7 +137,15 @@ class GetComments(ListAPIView):
     pagination_class = paginators.CommentPaginator
 
     def get_queryset(self):
-        comments = models.Comment.objects.select_related('author', 'product')\
-            .filter(product__slug=self.kwargs['product_slug']).filter(answers=None)
-        return comments
+        return models.Comment.objects.select_related('author', 'product')\
+            .filter(product__slug=self.kwargs['product_slug']).filter(comment=None)
+
+
+class GetAnswers(ListAPIView):
+    lookup_field = 'comment_id'
+    serializer_class = serializers.CommentSerializer
+    pagination_class = paginators.CommentPaginator
+
+    def get_queryset(self):
+        return models.Comment.objects.select_related('author', 'product').filter(comment__pk=self.kwargs['comment_id'])
 
