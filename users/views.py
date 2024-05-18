@@ -59,7 +59,7 @@ class RegistrationView(APIView):
                 user = models.CustomUser.objects.create_user(username=username, password=password,
                                                              email=email)
                 user.save()
-                login(request, user)
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
                 return JsonResponse({'status': 'success'})
         except Exception as ex:
@@ -75,7 +75,7 @@ class LoginView(APIView):
         try:
             user = models.CustomUser.objects.get(Q(email=request.POST['username']) | Q(username=request.POST['username']))
             if user and user.check_password(request.POST['password']):
-                login(request, user)
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 return JsonResponse({'status': 'success'})
             return JsonResponse({'status': 'error', 'message': 'incorrect password'})
         except Exception as ex:
