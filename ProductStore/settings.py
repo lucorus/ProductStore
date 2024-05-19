@@ -21,6 +21,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_QUERY_EMAIL = True
+ACCOUNT_CHANGE_EMAIL = True
+ACCOUNT_CHANGE_PASSWORD = True
+# ACCOUNT_RATE_LIMITS = 1
+ACCOUNT_AUTHENTICATION_TIMEOUT = 100
 
 # Application definition
 
@@ -38,8 +44,11 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    "allauth.socialaccount.providers.openid",
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.steam',
+
 
     'basket',
     'products',
@@ -53,6 +62,10 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
+ACCOUNT_FORMS = {
+    'change_password': 'users.forms.CustomChangePasswordForm',
+    'set_password': 'users.forms.CustomSetPasswordForm',
+}
 
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.associate_by_email',

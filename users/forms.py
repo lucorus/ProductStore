@@ -1,3 +1,4 @@
+from allauth.account.forms import SetPasswordForm, ChangePasswordForm
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import *
@@ -30,3 +31,14 @@ class UserLoginForm(AuthenticationForm):
         super(UserLoginForm, self).__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({'class': 'form-control', 'placeholder': 'введите никнейм или почту'})
         self.fields['password'].widget.attrs.update({'class': 'form-control', 'placeholder': "введите пароль"})
+
+
+class CustomChangePasswordForm(ChangePasswordForm):
+    oldpassword = forms.CharField(label='Текущий пароль', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    password1 = forms.CharField(label='Новый пароль', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    password2 = forms.CharField(label='Новый пароль(ещё раз)', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+
+class CustomSetPasswordForm(SetPasswordForm):
+    password1 = forms.CharField(label='Новый пароль', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    password2 = forms.CharField(label='Новый пароль(ещё раз)', widget=forms.PasswordInput(attrs={'class': 'form-control'}))

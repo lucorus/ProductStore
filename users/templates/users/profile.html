@@ -46,7 +46,11 @@
 </head>
 <body>
 {% include "navbar.html" %}
-{% include "filters.html" %}<br>
+<div style="margin-top: 1vh; margin-left: 0.5vw; margin-right: 0.5vw;">
+{% include "filters.html" %}
+<span style="float: right"><a class="btn btn-dark" align="right" href="{% url 'account_set_password' %}">Сменить пароль</a></span>
+<br>
+</div>
 
 <div class="input-group" id="buttons" style="margin-left: 38vw">
   <button class="button active" onclick="switchPage('page1', this)">Корзина</button>

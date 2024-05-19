@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from users.models import CustomUser
+from users.models import CustomUser, Comment
 from products.models import Product, Category, SubCategory
 import json
 
@@ -137,3 +137,121 @@ class TestAddToFavorites(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['status'], 'error')
         self.assertIsNone(self.user.favorites.first())
+
+
+class TestCreateComment(TestCase):
+    def setUp(self):
+        self.category = Category.objects.create(title='Category')
+        self.category.save()
+        self.subcategory = SubCategory.objects.create(title='Subcategory', category=self.category)
+        self.subcategory.save()
+        self.product = Product.objects.create(title='Title', slug='title', price=1000, discount=10, subcategory=self.subcategory)
+        self.product.save()
+        self.user = CustomUser.objects.create_user(username='testuser', password='testpassword')
+        self.client.login(username='testuser', password='testpassword')
+
+    def tearDown(self):
+        self.user.delete()
+        self.product.delete()
+        self.subcategory.delete()
+        self.category.delete()
+
+    def test_correct(self):
+        response = self.client.post(
+            reverse('users:create_comment', kwargs={'product_slug': self.product.slug}),
+            data={'text': 'text', 'estimation': '5'}
+        )
+        data = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['status'], 'success')
+
+    def test_logout_user(self):
+        client = Client()
+        response = client.post(
+            reverse('users:create_comment', kwargs={'product_slug': self.product.slug}),
+            data={'text': 'text', 'estimation': '5'}
+        )
+        self.assertEqual(response.status_code, 302)
+
+    def test_with_not_exists_product(self):
+        response = self.client.post(
+            reverse('users:create_comment', kwargs={'product_slug': 'not_exists_slug'}),
+            data={'text': 'text', 'estimation': '5'}
+        )
+        data = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['status'], 'error')
+
+
+class TestGetComments(TestCase):
+    def setUp(self):
+        self.category = Category.objects.create(title='Category')
+        self.category.save()
+        self.subcategory = SubCategory.objects.create(title='Subcategory', category=self.category)
+        self.subcategory.save()
+        self.product = Product.objects.create(title='Title', slug='title', price=1000, discount=10, subcategory=self.subcategory)
+        self.product.save()
+        self.user = CustomUser.objects.create_user(username='testuser', password='testpassword')
+        self.client.login(username='testuser', password='testpassword')
+        self.comment = Comment(author=self.user, product=self.product, text='text', estimation=5)
+        self.comment.save()
+
+    def tearDown(self):
+        self.comment.delete()
+        self.user.delete()
+        self.product.delete()
+        self.subcategory.delete()
+        self.category.delete()
+
+    def test_correct(self):
+        response = self.client.get(reverse('users:get_comments', kwargs={'product_slug': self.product.slug}))
+        data = json.loads(response.content)
+        print(f'DATA  === {data}')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['results'][0]['id'], self.comment.pk)
+
+    def test_with_not_exists_product(self):
+        response = self.client.get(reverse('users:get_comments', kwargs={'product_slug': 'not_exists_product_slug'}))
+        data = json.loads(response.content)
+        print(data, ' === DATA 2')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['results'], [])
+
+
+class TestGetAnswers(TestCase):
+    def setUp(self):
+        self.category = Category.objects.create(title='Category')
+        self.category.save()
+        self.subcategory = SubCategory.objects.create(title='Subcategory', category=self.category)
+        self.subcategory.save()
+        self.product = Product.objects.create(title='Title', slug='title', price=1000, discount=10,
+                                              subcategory=self.subcategory)
+        self.product.save()
+        self.user = CustomUser.objects.create_user(username='testuser', password='testpassword')
+        self.client.login(username='testuser', password='testpassword')
+        self.answer = Comment.objects.create(author=self.user, product=self.product, text='answer', estimation=0)
+        self.answer.save()
+        self.comment = Comment(author=self.user, product=self.product, text='text', estimation=5)
+        self.comment.save()
+        self.comment.answers.add(self.answer)
+        self.comment.save()
+
+    def tearDown(self):
+        self.answer.delete()
+        self.comment.delete()
+        self.user.delete()
+        self.product.delete()
+        self.subcategory.delete()
+        self.category.delete()
+
+    def test_correct(self):
+        response = self.client.get(reverse('users:get_answers', kwargs={'comment_id': self.comment.pk}))
+        data = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['results'][0]['id'], self.answer.id)
+
+    def test_with_not_exists_comment(self):
+        response = self.client.get(reverse('users:get_answers', kwargs={'comment_id': self.comment.pk+100}))
+        data = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['results'], [])

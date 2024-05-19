@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <img src="${product.photo}" alt="фотка не загрузилась">
                 <div>
                     <a style='margin-right: 1vh' href="${product.url}"><b>${product.title}</b></a>
-                    <a style='margin-right: 1vh' style="color: green" onclick="addProductInBasket('${product.slug}')" href="#">+</a>
+                    <a style="margin-right: 1vh; color: green;" onclick="addProductInBasket('${product.slug}')" href="#">+</a>
                     <a onclick="deleteProductFromBasket('${product.slug}')" style="color: red" href="#">X</a>
                     <div class="product-price">${product.price - (product.price * (product.discount/100))}</div>
                     <div>Скидка на товар ${product.discount}%</div>
