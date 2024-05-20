@@ -13,6 +13,7 @@ urlpatterns = [
     path('create_comment/<slug:product_slug>', views.CreateComment.as_view(), name='create_comment'),
     path('get_comments/<slug:product_slug>', views.GetComments.as_view(), name='get_comments'),
     path('get_answers/<int:comment_id>', views.GetAnswers.as_view(), name='get_answers'),
+    path('create_complaint', views.CreateComplain.as_view(), name='create_complaint'),
 ]
 
 

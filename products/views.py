@@ -3,6 +3,7 @@ from django.shortcuts import render
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from users.forms import UserLoginForm
+from users.models import Comment
 from . import models, serializers, paginators
 from . import utils
 import logging
@@ -20,6 +21,11 @@ def categories(request):
 
 def product_detail(request, slug):
     return render(request, 'products/product.html', {'form': UserLoginForm, 'slug': slug})
+
+
+def show_answers(request, comment_id):
+    slug = Comment.objects.get(pk=comment_id).product.slug
+    return render(request, 'products/answers.html', {'form': UserLoginForm, 'comment_id': comment_id, 'slug': slug})
 
 
 class Products(ListAPIView):

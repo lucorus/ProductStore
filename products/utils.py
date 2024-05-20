@@ -18,15 +18,18 @@ def get_products_by_filter(request):
         products = models.Product.objects.showing_products().select_related('subcategory'). \
             annotate(discount_price=F('price') - (F('price') * F('discount') / 100)) \
             .filter(Q(discount_price__gte=min_price) & Q(discount_price__lte=max_price)).order_by(sorting)
+
         if category != 'Null':
             products = products.filter(subcategory__category__slug=category)
         if subcategory != 'Null':
             products = products.filter(subcategory__slug=subcategory)
+
         if word:
             products = models.Product.objects.annotate(
-                search=SearchVector('title', 'subcategory__title', 'subcategory__category__title')).filter(search=word)
-            vector = SearchVector('title', weight='A') + SearchVector('subcategory__title', weight='B') \
-                     + SearchVector('subcategory__category__title', weight='C')
+                search=SearchVector('title', 'subcategory__title', 'subcategory__category__title')
+            ).filter(search=word)
+            vector = SearchVector('title', weight='A') + SearchVector('subcategory__title', weight='B')
+            vector += SearchVector('subcategory__category__title', weight='C')
             models.Product.objects.annotate(rank=SearchVector(vector, products)).order_by('rank')
         return products
     except Exception as ex:

@@ -5,14 +5,21 @@ from . import models
 
 
 @register(models.CustomUser)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'username', 'slug']
+class CustomUserAdmin(admin.ModelAdmin):
+    list_display = ['pk', 'access_write_comments', 'username', 'slug']
     prepopulated_fields = {'slug': ('username',)}
 
 
 @register(models.Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'author', 'product']
+    list_filter = ['author', 'product']
+    list_display = ['pk', 'showing', 'author', 'product']
+
+
+@register(models.Complaints)
+class ComplaintsAdmin(admin.ModelAdmin):
+    list_filter = ['author', 'comment']
+    list_display = ['pk', 'is_reviewed', 'author', 'comment']
 
 
 class SocialAppAdmin(admin.ModelAdmin):

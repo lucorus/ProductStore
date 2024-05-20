@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from users.models import CustomUser, Comment
+from users.models import CustomUser, Comment, Complaints
 from products.models import Product, Category, SubCategory
 import json
 
@@ -105,8 +105,6 @@ class TestAddToFavorites(TestCase):
 
     def tearDown(self):
         self.user.delete()
-        self.product.delete()
-        self.subcategory.delete()
         self.category.delete()
 
     def test_correct(self):
@@ -152,8 +150,6 @@ class TestCreateComment(TestCase):
 
     def tearDown(self):
         self.user.delete()
-        self.product.delete()
-        self.subcategory.delete()
         self.category.delete()
 
     def test_correct(self):
@@ -197,10 +193,7 @@ class TestGetComments(TestCase):
         self.comment.save()
 
     def tearDown(self):
-        self.comment.delete()
         self.user.delete()
-        self.product.delete()
-        self.subcategory.delete()
         self.category.delete()
 
     def test_correct(self):
@@ -237,11 +230,7 @@ class TestGetAnswers(TestCase):
         self.comment.save()
 
     def tearDown(self):
-        self.answer.delete()
-        self.comment.delete()
         self.user.delete()
-        self.product.delete()
-        self.subcategory.delete()
         self.category.delete()
 
     def test_correct(self):
@@ -255,3 +244,45 @@ class TestGetAnswers(TestCase):
         data = json.loads(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['results'], [])
+
+
+class CreateComplain(TestCase):
+    def setUp(self):
+        self.category = Category.objects.create(title='Category')
+        self.category.save()
+        self.subcategory = SubCategory.objects.create(title='Subcategory', category=self.category)
+        self.subcategory.save()
+        self.product = Product.objects.create(title='Title', slug='title', price=1000, discount=10,
+                                              subcategory=self.subcategory)
+        self.product.save()
+        self.user = CustomUser.objects.create_user(username='testuser', password='testpassword')
+        self.comment = Comment(author=self.user, product=self.product, text='text', estimation=5)
+        self.comment.save()
+        self.client.login(username='testuser', password='testpassword')
+
+    def tearDown(self):
+        self.user.delete()
+        self.category.delete()
+
+    def test_correct(self):
+        response = self.client.get(reverse('users:create_complaint'), data={'comment_id': self.comment.pk})
+        data = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['status'], 'success')
+
+    def test_with_logout_user(self):
+        response = Client().get(reverse('users:create_complaint'), data={'comment_id': self.comment.pk})
+        self.assertEqual(response.status_code, 302)
+
+    def test_with_not_exists_comment(self):
+        response = self.client.get(reverse('users:create_complaint'), data={'comment_id': self.comment.pk+100})
+        data = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['status'], 'error')
+
+    def test_without_data(self):
+        response = self.client.get(reverse('users:create_complaint'))
+        data = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['status'], 'error')
+

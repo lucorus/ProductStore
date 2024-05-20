@@ -124,7 +124,7 @@ class CreateComment(LoginRequiredMixin, APIView):
                 )
                 question.save()
             else:
-                comment = models.Comment.objects.create(author=request.user, product=product, text=text, estimation=estimation)
+                models.Comment.objects.create(author=request.user, product=product, text=text, estimation=estimation)
             return JsonResponse({'status': 'success'})
         except Exception as ex:
             logger.error(ex)
@@ -147,5 +147,18 @@ class GetAnswers(ListAPIView):
     pagination_class = paginators.CommentPaginator
 
     def get_queryset(self):
-        return models.Comment.objects.select_related('author', 'product').filter(comment__pk=self.kwargs['comment_id'])
+        return models.Comment.objects.showing_comments().select_related('author', 'product').filter(comment__pk=self.kwargs['comment_id'])
+
+
+class CreateComplain(LoginRequiredMixin, APIView):
+    def get(self, request):
+        try:
+            comment_id = request.GET.get('comment_id') or None
+            comment = models.Comment.objects.get(id=comment_id)
+            models.Complaints.objects.get_or_create(author=request.user, comment=comment)
+            return JsonResponse({'status': 'success'})
+        except Exception as ex:
+            logger.error(ex)
+            return JsonResponse({'status': 'error'})
+
 
