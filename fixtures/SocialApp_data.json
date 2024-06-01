@@ -1,0 +1,34 @@
+[
+  {
+    "model": "socialaccount.socialapp",
+    "pk": 1,
+    "fields": {
+      "provider": "github",
+      "provider_id": "",
+      "name": "github",
+      "client_id": "",
+      "secret": "",
+      "key": "",
+      "settings": {},
+      "sites": [
+        1
+      ]
+    }
+  },
+  {
+    "model": "socialaccount.socialapp",
+    "pk": 2,
+    "fields": {
+      "provider": "google",
+      "provider_id": "",
+      "name": "google",
+      "client_id": "",
+      "secret": "",
+      "key": "",
+      "settings": {},
+      "sites": [
+        1
+      ]
+    }
+  }
+]

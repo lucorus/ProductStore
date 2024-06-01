@@ -1,0 +1,92 @@
+[
+  {
+    "model": "users.comment",
+    "pk": 1,
+    "fields": {
+      "author": 1,
+      "product": 2,
+      "text": "first comment",
+      "estimation": 5,
+      "showing": true,
+      "answers": []
+    }
+  },
+  {
+    "model": "users.comment",
+    "pk": 2,
+    "fields": {
+      "author": 2,
+      "product": 2,
+      "text": "first test answer",
+      "estimation": 4,
+      "showing": true,
+      "answers": [
+        1
+      ]
+    }
+  },
+  {
+    "model": "users.comment",
+    "pk": 3,
+    "fields": {
+      "author": 1,
+      "product": 2,
+      "text": "first answer on answer",
+      "estimation": 5,
+      "showing": true,
+      "answers": [
+        2
+      ]
+    }
+  },
+  {
+    "model": "users.comment",
+    "pk": 4,
+    "fields": {
+      "author": 2,
+      "product": 2,
+      "text": "second comment",
+      "estimation": 4,
+      "showing": true,
+      "answers": [
+        32
+      ]
+    }
+  },
+  {
+    "model": "users.comment",
+    "pk": 7,
+    "fields": {
+      "author": 1,
+      "product": 52,
+      "text": "q",
+      "estimation": 4,
+      "showing": true,
+      "answers": []
+    }
+  },
+  {
+    "model": "users.comment",
+    "pk": 32,
+    "fields": {
+      "author": 1,
+      "product": 2,
+      "text": "first answer on second comment",
+      "estimation": 0,
+      "showing": true,
+      "answers": []
+    }
+  },
+  {
+    "model": "users.comment",
+    "pk": 33,
+    "fields": {
+      "author": 1,
+      "product": 30,
+      "text": "Pellentesque efficitur ligula vitae pulvinar laoreet. Praesent at risus auctor, accumsan massa nec, bibendum diam. Donec in feugiat erat, eu fringilla nisl. Curabitur porta nunc quis dui feugiat tincidunt. Nullam ut sapien eget augue tincidunt ultrices. Fusce dictum, orci eget pellentesque ultrices, massa nisi vulputate neque, vel malesuada tortor libero vel orci. Quisque commodo nulla elit, eget varius massa hendrerit id. Fusce leo nisi, cursus ac quam ut, consectetur condimentum dolor. Vestibulum at rutrum ante. Aenean vitae felis eget urna vulputate scelerisque. Nam nec ante non eros tincidunt feugiat. ",
+      "estimation": 3,
+      "showing": true,
+      "answers": []
+    }
+  }
+]

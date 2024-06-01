@@ -1,0 +1,12 @@
+[
+  {
+    "model": "account.emailaddress",
+    "pk": 3,
+    "fields": {
+      "user": 45,
+      "email": "ikedzava.h@gmail.com",
+      "verified": true,
+      "primary": true
+    }
+  }
+]

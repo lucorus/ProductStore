@@ -20,6 +20,7 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://127.0.0.1', 'http://0.0.0.0']
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
 SOCIALACCOUNT_QUERY_EMAIL = True
@@ -28,7 +29,6 @@ ACCOUNT_CHANGE_PASSWORD = True
 # ACCOUNT_RATE_LIMITS = 1
 ACCOUNT_AUTHENTICATION_TIMEOUT = 100
 
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.steam',
+    "debug_toolbar",
 
 
     'basket',
@@ -56,6 +57,20 @@ INSTALLED_APPS = [
 ]
 
 SITE_ID = 1
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+    '0.0.0.0'
+]
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": f"redis://{env('REDIS_HOST')}",
+    }
+}
+
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -81,6 +96,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     "allauth.account.middleware.AccountMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 LOGGING = {

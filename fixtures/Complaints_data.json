@@ -1,0 +1,47 @@
+[
+  {
+    "model": "users.complaints",
+    "pk": 1,
+    "fields": {
+      "author": 45,
+      "comment": 33,
+      "is_reviewed": false
+    }
+  },
+  {
+    "model": "users.complaints",
+    "pk": 2,
+    "fields": {
+      "author": 2,
+      "comment": 33,
+      "is_reviewed": true
+    }
+  },
+  {
+    "model": "users.complaints",
+    "pk": 3,
+    "fields": {
+      "author": 45,
+      "comment": 32,
+      "is_reviewed": false
+    }
+  },
+  {
+    "model": "users.complaints",
+    "pk": 4,
+    "fields": {
+      "author": 1,
+      "comment": 7,
+      "is_reviewed": false
+    }
+  },
+  {
+    "model": "users.complaints",
+    "pk": 5,
+    "fields": {
+      "author": 1,
+      "comment": 33,
+      "is_reviewed": true
+    }
+  }
+]

@@ -1,0 +1,28 @@
+[
+  {
+    "model": "socialaccount.socialaccount",
+    "pk": 11,
+    "fields": {
+      "user": 45,
+      "provider": "google",
+      "uid": "111613318584691376666",
+      "last_login": "2024-05-22T14:18:09.047Z",
+      "date_joined": "2024-05-18T16:52:38.287Z",
+      "extra_data": {
+        "aud": "990987741079-46vvipbh096pel70mqgbkm79f752s5sr.apps.googleusercontent.com",
+        "azp": "990987741079-46vvipbh096pel70mqgbkm79f752s5sr.apps.googleusercontent.com",
+        "exp": 1716391089,
+        "iat": 1716387489,
+        "iss": "https://accounts.google.com",
+        "sub": "111613318584691376666",
+        "name": "Никита Хомяков",
+        "email": "ikedzava.h@gmail.com",
+        "at_hash": "xh5pdtWvmvcohMkaDQZb6A",
+        "picture": "https://lh3.googleusercontent.com/a/ACg8ocJbkGiyt6nDvvB-i669S2FVgzTI5e9nosjgBtrkRCU4oZbtVw=s96-c",
+        "given_name": "Никита",
+        "family_name": "Хомяков",
+        "email_verified": true
+      }
+    }
+  }
+]

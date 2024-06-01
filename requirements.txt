@@ -1,5 +1,6 @@
 anyascii==0.3.2
 asgiref==3.7.2
+async-timeout==4.0.3
 beautifulsoup4==4.12.3
 certifi==2024.2.2
 cffi==1.16.0
@@ -8,6 +9,7 @@ cryptography==42.0.7
 defusedxml==0.7.1
 Django==5.0.4
 django-allauth==0.63.1
+django-debug-toolbar==4.4.2
 django-environ==0.11.2
 django-filter==24.2
 django-modelcluster==6.3
@@ -18,6 +20,7 @@ djangorestframework==3.15.1
 draftjs-exporter==5.0.0
 et-xmlfile==1.1.0
 filetype==1.2.0
+hiredis==2.3.2
 idna==3.7
 l18n==2021.3
 laces==0.1.1
@@ -32,6 +35,7 @@ python-json-logger==2.0.7
 python-slugify==8.0.4
 python3-openid==3.2.0
 pytz==2024.1
+redis==5.0.4
 requests==2.31.0
 requests-oauthlib==2.0.0
 six==1.16.0
