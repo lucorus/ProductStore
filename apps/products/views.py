@@ -2,8 +2,8 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
-from users.forms import UserLoginForm
-from users.models import Comment
+from apps.users.forms import UserLoginForm
+from apps.users.models import Comment
 from . import models, serializers, paginators
 from . import utils
 import logging

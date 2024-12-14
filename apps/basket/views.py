@@ -1,8 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from rest_framework.views import APIView
-from products.models import Product
-from users.models import CustomUser
+from apps.products.models import Product
+from apps.users.models import CustomUser
 from . import models
 import logging
 

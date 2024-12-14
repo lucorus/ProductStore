@@ -1,4 +1,4 @@
-from products.serializers import ProductSerializer
+from apps.products.serializers import ProductSerializer
 from rest_framework import serializers
 from . import models
 

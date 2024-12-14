@@ -8,18 +8,17 @@ from django.views.generic import DetailView, ListView
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from . import models, forms, serializers, paginators
-from basket.models import Basket
-from products.utils import get_products_by_filter
-from products.models import Product
+from apps.basket.models import Basket
+from apps.products.utils import get_products_by_filter
+from apps.products.models import Product
 import logging
 
 logger = logging.getLogger('main')
 
 
-class ProfileView(LoginRequiredMixin, ListView):
-    template_name = 'users/profile.html'
-    paginate_by = 1
-    context_object_name = 'user'
+class ProfileView(LoginRequiredMixin, ListAPIView):
+    serializer_class = ""
+    pagination_class = ""
 
     def get_queryset(self):
         try:

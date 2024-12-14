@@ -1,10 +1,11 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from slugify import slugify
-from products.models import Product
+
+from apps.core.models import BaseSlugField
+from apps.products.models import Product
 
 
-class CustomUser(AbstractUser):
+class CustomUser(AbstractUser, BaseSlugField):
     username = models.CharField(max_length=40, unique=True, blank=True, verbose_name='Имя пользователя')
     favorites = models.ManyToManyField(Product, related_name='users', blank=True, verbose_name='Избранное')
     slug = models.SlugField()
@@ -21,10 +22,6 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.username)
-        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -44,13 +41,6 @@ class Comment(models.Model):
     answers = models.ManyToManyField('Comment', blank=True, related_name='comment', verbose_name='Ответы')
     showing = models.BooleanField(default=True, verbose_name='Отображать')
     objects = CustomCommentManager()
-
-    def save(self, *args, **kwargs):
-        try:
-            if int(self.estimation) > 5:
-                self.estimation = 5
-        finally:
-            super().save(*args, **kwargs)
 
     def count_answers(self) -> int:
         return Comment.objects.filter(comment__pk=self.pk).count()

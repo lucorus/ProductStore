@@ -1,3 +1,5 @@
+import datetime
+
 from .formatters import CustomJsonFormatter
 import os
 from os.path import join
@@ -27,7 +29,7 @@ SOCIALACCOUNT_QUERY_EMAIL = True
 ACCOUNT_CHANGE_EMAIL = True
 ACCOUNT_CHANGE_PASSWORD = True
 # ACCOUNT_RATE_LIMITS = 1
-ACCOUNT_AUTHENTICATION_TIMEOUT = 100
+# ACCOUNT_AUTHENTICATION_TIMEOUT = 100
 
 
 INSTALLED_APPS = [
@@ -50,11 +52,16 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.steam',
     "debug_toolbar",
     'drf_spectacular',
+    'rest_framework_json_api',
+    'rest_framework_jwt',
+    'djoser',
+    'adrf',
 
 
-    'basket',
-    'products',
-    'users',
+    'api',
+    'apps.basket.apps.BasketConfig',
+    'apps.products.apps.ProductsConfig',
+    'apps.users.apps.UsersConfig',
 ]
 
 SITE_ID = 1
@@ -99,6 +106,40 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        # 'rest_framework.permissions.IsAdminUser',
+        'rest_framework.permissions.AllowAny',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # 'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework_json_api.pagination.PageNumberPagination',
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=2),
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7)
+}
+
+
+DJOSER = {
+    # 'SEND_ACTIVATION_EMAIL': True,
+    # 'SEND_CONFIRMATION_EMAIL': True,
+    # 'ACTIVATION_URL': 'auth/activate/{uid}/{token}/',
+    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True,
+    'PASSWORD_RESET_CONFIRM_URL': 'auth/reset/confirm/{uid}/{token}/',
+    # 'TOKEN_MODEL': None
+}
 
 LOGGING = {
     'version': 1,
@@ -201,10 +242,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-}
-
 SPECTACULAR_SETTINGS = {
     'TITLE': 'ProductStore',
     'VERSION': '1.0.0',
@@ -218,7 +255,7 @@ SPECTACULAR_SETTINGS = {
 
 #SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = 'ru-ru'
 
 AUTH_USER_MODEL = 'users.CustomUser'
 

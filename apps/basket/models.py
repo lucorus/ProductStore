@@ -1,6 +1,6 @@
 from django.db import models
-from users.models import CustomUser
-from products.models import Product
+from apps.users.models import CustomUser
+from apps.products.models import Product
 
 
 class Basket(models.Model):
