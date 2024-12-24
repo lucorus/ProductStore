@@ -8,20 +8,20 @@ logger = logging.getLogger('main')
 
 def get_products_by_filter(request):
     try:
-        word = request.GET.get('word') or None
-        min_price = request.GET.get('min_price') or 0
-        max_price = request.GET.get('max_price') or 99999999999
-        sorting = request.GET.get('sorting') or '-id'
-        category = request.GET.get('category') or 'Null'
-        subcategory = request.GET.get('subcategory') or 'Null'
+        word = request.data.get('word') or None
+        min_price = request.data.get('min_price') or 0
+        max_price = request.data.get('max_price') or 99999999999
+        sorting = request.data.get('sorting') or '-id'
+        category = request.data.get('category')
+        subcategory = request.data.get('subcategory')
 
-        products = Product.objects.showing_products().select_related('subcategory'). \
+        products = Product.objects.showing_products().select_related('subcategory', "subcategory__category"). \
             annotate(discount_price=F('price') - (F('price') * F('discount') / 100)) \
             .filter(Q(discount_price__gte=min_price) & Q(discount_price__lte=max_price)).order_by(sorting)
 
-        if category != 'Null':
+        if category:
             products = products.filter(subcategory__category__slug=category)
-        if subcategory != 'Null':
+        if subcategory:
             products = products.filter(subcategory__slug=subcategory)
 
         if word:
