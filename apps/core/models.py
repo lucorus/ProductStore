@@ -7,10 +7,12 @@ class BaseSlugField(models.Model):
         """
         Автоматически создает slug на основе поля title / username
         """
-        try:
+        if hasattr(self, 'username') and self.username:
             self.slug = slugify(self.username)
-        except:
+        elif hasattr(self, 'title') and self.title:
             self.slug = slugify(self.title)
+        else:
+            raise ValueError("Не удалось создать slug: отсутствует поле username или title")
         super().save(*args, **kwargs)
 
     slug = models.SlugField(unique=True, blank=True)

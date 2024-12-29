@@ -133,12 +133,9 @@ JWT_AUTH = {
 
 
 DJOSER = {
-    # 'SEND_ACTIVATION_EMAIL': True,
-    # 'SEND_CONFIRMATION_EMAIL': True,
-    # 'ACTIVATION_URL': 'auth/activate/{uid}/{token}/',
     'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True,
     'PASSWORD_RESET_CONFIRM_URL': 'auth/reset/confirm/{uid}/{token}/',
-    # 'TOKEN_MODEL': None
+    "USER_VIEWSET": "api.views.CustomUserViewSet",
 }
 
 LOGGING = {
@@ -273,11 +270,9 @@ SOCIAL_AUTH_URL_NAMESPACE = 'social'
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = 'static'
 MEDIA__ROOT = join(BASE_DIR, '')
 
-STATICFILES_DIRS = [
-   os.path.join(BASE_DIR, "static"),
-]
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',

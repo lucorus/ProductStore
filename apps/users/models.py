@@ -8,8 +8,7 @@ from apps.products.models import Product
 class CustomUser(AbstractUser, BaseSlugField):
     username = models.CharField(max_length=40, unique=True, blank=True, verbose_name='Имя пользователя')
     favorites = models.ManyToManyField(Product, related_name='users', blank=True, verbose_name='Избранное')
-    slug = models.SlugField()
-    access_write_comments = models.BooleanField(default=True, verbose_name='Пользователь может писать комментарии?')
+    can_write_comments = models.BooleanField(default=True, verbose_name='Пользователь может писать комментарии?')
 
     def count_created_complaints(self) -> int:
         return Complaints.objects.filter(author=self).count()

@@ -18,4 +18,3 @@ class ProductForm(ModelForm):
     class Meta:
         model = models.Product
         fields = ['title', 'price', 'discount', 'photo', 'subcategory', 'showing']
-

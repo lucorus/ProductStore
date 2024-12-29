@@ -6,7 +6,7 @@ from . import models
 
 @register(models.CustomUser)
 class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'access_write_comments', 'username', 'slug']
+    list_display = ['pk', 'can_write_comments', 'username', 'slug']
     prepopulated_fields = {'slug': ('username',)}
 
 

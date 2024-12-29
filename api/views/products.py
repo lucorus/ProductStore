@@ -57,9 +57,9 @@ class ProductViewSet(ViewSet):
             logger.error(ex)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    async def retrieve(self, request, pk=None):
+    async def retrieve(self, request, pk: str):
         try:
-            product = await Product.objects.aget(slug=pk)
+            product = await Product.objects.aget(slug=pk)  # получаем под pk slug продукта
             serializer = await sync_to_async(ProductSerializer)(product)
             data = await sync_to_async(serializer.to_representation)(serializer.instance)
             return Response(data, status=status.HTTP_200_OK)

@@ -1,10 +1,14 @@
 from adrf.views import APIView
 from asgiref.sync import sync_to_async
+from djoser.views import UserViewSet
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 import logging
+
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from djoser.serializers import UserCreateSerializer
 
 from apps.products.models import Product
 from apps.basket.models import Basket
@@ -97,3 +101,13 @@ class FavoriteProducts(APIView):
         products_serializer = await sync_to_async(ProductSerializer)(favorite_products, many=True)
         products_data = await sync_to_async(products_serializer.to_representation)(products_serializer.instance)
         return Response(products_data, status=status.HTTP_200_OK)
+
+
+@extend_schema(tags=["Аутентификация"])
+class CustomUserViewSet(UserViewSet):
+    @action(["post"], detail=False)
+    def registration(self, request):
+        serializer = UserCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

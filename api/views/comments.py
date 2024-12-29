@@ -39,9 +39,9 @@ class CommentViews(APIView):
                 await Comment.objects.acreate(author=request.user, product=product, text=text, estimation=estimation)
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Product.DoesNotExist:
-            Response({"message": "Продукт не найден"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Продукт не найден"}, status=status.HTTP_400_BAD_REQUEST)
         except Comment.DoesNotExist:
-            Response({"message": "Комментарий не найден"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Комментарий не найден"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as ex:
             logger.error(ex)
             return Response({'status': 'error'}, status=status.HTTP_400_BAD_REQUEST)
@@ -54,7 +54,7 @@ class CommentViews(APIView):
             await comment.adelete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Comment.DoesNotExist:
-            Response({"message": "Комментарий не найден"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Комментарий не найден"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as ex:
             logger.error(ex)
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -70,7 +70,7 @@ class CommentViews(APIView):
             await comment.asave()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Comment.DoesNotExist:
-            Response({"message": "Комментарий не найден"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Комментарий не найден"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as ex:
             logger.error(ex)
             return Response({'status': 'error'}, status=status.HTTP_400_BAD_REQUEST)
@@ -106,9 +106,9 @@ class CommentViews(APIView):
             data["comments"] = comments_data
             return Response(data, status=status.HTTP_200_OK)
         except Comment.DoesNotExist:
-            Response({"message": "Комментарий не найден"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Комментарий не найден"}, status=status.HTTP_400_BAD_REQUEST)
         except Product.DoesNotExist:
-            Response({"message": "Продукт не найден"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Продукт не найден"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as ex:
             logger.error(ex)
             return Response(status=status.HTTP_400_BAD_REQUEST)
