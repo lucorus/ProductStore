@@ -7,7 +7,7 @@ class IsCommentAuthorOrReadOnly(BasePermission):
     или, если пользователь хочет создать комментарий
     """
 
-    def has_object_permission(self, request, view, obj):
+    async def has_object_permission(self, request, view, obj):
         if request.method in ['GET', 'HEAD', 'OPTIONS']:
             return True
 

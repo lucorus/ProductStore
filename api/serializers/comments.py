@@ -1,11 +1,11 @@
-from rest_framework import serializers
+from adrf.serializers import ModelSerializer
 
 from .products import ProductSerializer
 from .user import UserSerializer
 from apps.users.models import Comment
 
 
-class CommentSerializer(serializers.ModelSerializer):
+class CommentSerializer(ModelSerializer):
     comment_author = UserSerializer(read_only=True)
     product_commented = ProductSerializer(read_only=True)
 

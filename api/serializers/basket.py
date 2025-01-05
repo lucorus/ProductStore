@@ -1,12 +1,11 @@
 from rest_framework import serializers
+from adrf.serializers import ModelSerializer
 
-from .user import UserSerializer
 from .products import ProductSerializer
 from apps.basket.models import Basket
 
 
-class BasketSerializer(serializers.ModelSerializer):
-    # owner = UserSerializer(read_only=True)
+class BasketSerializer(ModelSerializer):
     product = ProductSerializer(read_only=True)
     get_count_products = serializers.IntegerField(source="get_count_products_in_basket")
     get_sum = serializers.IntegerField(source="get_sum_products")
