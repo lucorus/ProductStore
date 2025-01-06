@@ -19,10 +19,10 @@ class CategoriesView(APIView):
 
     async def get(self, request):
         """
-        Опционально принимает список (параметры должны быть в []) slug'ов категорий подкатегории которых будут выводиться
+        Опционально принимает список slug'ов категорий подкатегории которых будут выводиться
         """
-        category_slugs = request.data.get("groups_slugs") or None
-        page = request.data.get("page") or 0
+        category_slugs = request.query_params.getlist("groups_slugs") or None
+        page = int(request.query_params.get("page", 0))
 
         subcategories = await sync_to_async(SubCategory.objects.select_related)("category")
         if category_slugs:
@@ -46,7 +46,7 @@ class ProductViewSet(ViewSet):
         """
         try:
             products = await sync_to_async(get_products_by_filter)(request)
-            page = request.query_params.get("page") or 0
+            page = int(request.query_params.get("page", 0))
             products = products[page * self.page_size:(page + 1) * self.page_size]
             serializer = await sync_to_async(ProductSerializer)(products, many=True)
             data = await sync_to_async(serializer.to_representation)(serializer.instance)

@@ -80,8 +80,8 @@ class CommentViews(APIView):
         Получает отзывы на продукт с переданным product_slug или ответы на отзыв с переданным comment_id
         """
         try:
-            product_slug = request.data.get("product_slug")
-            comment_id = request.data.get("comment_id")  # айди комментария, на который дают ответ
+            product_slug = request.query_params.get("product_slug")
+            comment_id = request.query_params.get("comment_id")  # айди комментария, на который дают ответ
 
             if comment_id:
                 comment = await Comment.objects.aget(id=comment_id)

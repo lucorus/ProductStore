@@ -1,6 +1,7 @@
 import pytest
 from django.db import IntegrityError
 from django.utils.text import slugify
+
 from apps.products.models import Product, SubCategory, Category
 
 

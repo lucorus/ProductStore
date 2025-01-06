@@ -1,7 +1,8 @@
 import pytest
 from django.db import IntegrityError
-from apps.products.models import Product, SubCategory, Category
 from slugify import slugify
+
+from apps.products.models import Product, SubCategory, Category
 
 
 @pytest.fixture
